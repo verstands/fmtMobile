@@ -4,6 +4,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:fmt/screens/accueil.dart';
+import 'package:fmt/screens/login.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -15,9 +16,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   void _test() {
     Timer(
-        const Duration(seconds: 5),
+        const Duration(seconds: 1),
         () => Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const Accueil())));
+            context, MaterialPageRoute(builder: (context) => const Login())));
   }
 
   void initState() {

@@ -59,7 +59,7 @@ class _LoginState extends State<Login> {
               TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   controller: txtEmail,
-                  validator: (val) => val!.isEmpty ? 'Email invalid' : null,
+                  validator: (val) => val!.isEmpty ? 'champs email vide' : null,
                   decoration: kinputdecoration('Email')),
               SizedBox(
                 height: 10,
@@ -69,7 +69,7 @@ class _LoginState extends State<Login> {
                 obscureText: true,
                 controller: txtpassword,
                 validator: (val) =>
-                    val!.isEmpty ? 'mot de password invalid' : null,
+                    val!.isEmpty ? 'champs mot de password vide' : null,
                 decoration: kinputdecoration('Password'),
               ),
               loading
