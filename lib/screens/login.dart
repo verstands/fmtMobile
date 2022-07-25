@@ -1,7 +1,12 @@
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
+import 'package:fmt/constant.dart';
+import 'package:fmt/models/api_response.dart';
+import 'package:fmt/models/login.model.dart';
+import 'package:fmt/screens/accueil.dart';
 import 'package:fmt/screens/home.dart';
+import 'package:fmt/screens/load.dart';
+import 'package:fmt/services/login.service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -35,7 +40,7 @@ class _LoginState extends State<Login> {
     await pref.setString('token', agence.token ?? '');
     await pref.setInt('id', agence.id ?? 0);
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => accueil()), (route) => false);
+        MaterialPageRoute(builder: (context) => Accueil()), (route) => false);
   }
 
   @override
