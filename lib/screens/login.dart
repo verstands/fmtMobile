@@ -82,9 +82,17 @@ class _LoginState extends State<Login> {
                         borderRadius: BorderRadius.all(Radius.circular(2)),
                       ),
                       height: 85,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            shadowColor: const Color(0xFF000000)),
+                      child: TextButton(
+                        child: Text(
+                          "Se connecter",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateColor.resolveWith(
+                                (states) => Colors.blue),
+                            padding: MaterialStateProperty.resolveWith(
+                                (states) =>
+                                    EdgeInsets.symmetric(vertical: 10))),
                         onPressed: () {
                           if (formkey.currentState!.validate()) {
                             setState(() {
@@ -93,7 +101,6 @@ class _LoginState extends State<Login> {
                             });
                           }
                         },
-                        child: const Text('Se connecter'),
                       ),
                     ),
             ],

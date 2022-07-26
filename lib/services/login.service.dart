@@ -13,7 +13,6 @@ Future<ApiResponse> loginUser(String email, String password) async {
       headers: {'Accept': 'application/json'},
       body: {'email': email, 'password': password},
     );
-
     switch (response.statusCode) {
       case 200:
         apiResponse.data = Agence.fromJson(jsonDecode(response.body));
