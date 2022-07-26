@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:fmt/constant.dart';
 import 'package:fmt/models/api_response.dart';
 import 'package:fmt/models/depot.model.dart';
+import 'package:fmt/models/devise.model.dart';
 import 'package:fmt/services/login.service.dart';
 import 'package:http/http.dart' as http;
 
@@ -43,6 +44,27 @@ Future<ApiResponse> DepotUser(
       default:
         apiResponse.erreur = somethingwentwrong;
         break;
+    }
+  } catch (e) {
+    apiResponse.erreur = serverError;
+  }
+  return apiResponse;
+}
+
+Future<ApiResponse> getPays() async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    String token = await getToken();
+    final response = await http.get(Uri.parse(userURL), headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
+    if (response.statusCode == 200) {
+      apiResponse.data = Devise.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      apiResponse.erreur = unauthorized;
+    } else {
+      apiResponse.erreur = somethingwentwrong;
     }
   } catch (e) {
     apiResponse.erreur = serverError;
