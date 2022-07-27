@@ -3,6 +3,10 @@ import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fmt/constant.dart';
+import 'package:fmt/models/api_response.dart';
+import 'package:fmt/screens/login.dart';
+import 'package:fmt/services/depot.service.dart';
 
 class Accueil extends StatefulWidget {
   const Accueil({Key? key}) : super(key: key);
@@ -23,6 +27,33 @@ class _AccueilState extends State<Accueil> {
   TextEditingController txtMontant = TextEditingController();
   TextEditingController txtDevise = TextEditingController();
   //fin de depot
+  //depot
+  bool loading = false;
+  void _createDepot() async {
+    ApiResponse response = await DepotUser(
+        txtNum_envoie.text,
+        txtMontant.text,
+        txtDevise.text,
+        txtExp.text,
+        txtBenefice.text,
+        txtTel.text,
+        txtAgence.text,
+        txtPays.text);
+    if (response.erreur == null) {
+      Navigator.of(context).pop();
+    } else if (response.erreur == unauthorized) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.erreur}'),
+      ));
+      setState(() {
+        loading = !loading;
+      });
+    }
+  }
+  //fin depot
 
   @override
   int _selectedIndex = 0;
@@ -230,7 +261,26 @@ class _AccueilState extends State<Accueil> {
                         padding: MaterialStateProperty.resolveWith(
                             (states) => EdgeInsets.symmetric(vertical: 10))),
                     onPressed: () {
-                      if (formkey.currentState!.validate()) {}
+                      if (formkey.currentState!.validate()) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text("FMT"),
+                            content: Text("Voulez-vous faire une transaction?"),
+                            actions: [
+                              TextButton(onPressed: () {}, child: Text("Non")),
+                              TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      loading = !loading;
+                                    });
+                                    _createDepot();
+                                  },
+                                  child: Text("Oui"))
+                            ],
+                          ),
+                        );
+                      }
                     },
                   ),
                 )
@@ -281,4 +331,10 @@ class _AccueilState extends State<Accueil> {
       ),
     );
   }
+}
+
+@override
+Widget build(BuildContext context) {
+  // TODO: implement build
+  throw UnimplementedError();
 }

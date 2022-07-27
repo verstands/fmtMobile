@@ -1,12 +1,12 @@
 class Depot {
   String? num_envoi;
-  int? montant_envoi;
-  int? devise;
+  String? montant_envoi;
+  String? devise;
   String? expediteur;
   String? beneficiaire;
   String? phone;
-  int? agence;
-  int? pays;
+  String? agence;
+  String? pays;
 
   Depot(
       {this.num_envoi,

@@ -9,19 +9,19 @@ import 'package:http/http.dart' as http;
 
 Future<ApiResponse> DepotUser(
     String num_envoi,
-    int montant_envoi,
-    int devise,
+    String montant_envoi,
+    String devise,
     String expediteur,
     String beneficiaire,
     String phone,
-    int agence,
-    int pays) async {
+    String agence,
+    String pays) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     String token = await getToken();
     final response = await http.post(
       Uri.parse(depotURL),
-      headers: {'Accept': 'application/json'},
+      headers: {'Accept': 'application/json', 'Autorization': 'Bearer $token'},
       body: {
         'num_envoi': num_envoi,
         'montant_envoi': montant_envoi,
@@ -35,11 +35,14 @@ Future<ApiResponse> DepotUser(
     );
     switch (response.statusCode) {
       case 200:
-        apiResponse.data = Depot.fromJson(jsonDecode(response.body));
+        apiResponse.data = jsonDecode(response.body);
         break;
       case 422:
         final errors = jsonDecode(response.body)['message'];
         apiResponse.erreur = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 401:
+        apiResponse.erreur = unauthorized;
         break;
       default:
         apiResponse.erreur = somethingwentwrong;
