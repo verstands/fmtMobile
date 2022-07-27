@@ -39,6 +39,7 @@ class _AccueilState extends State<Accueil> {
         txtTel.text,
         txtAgence.text,
         txtPays.text);
+
     if (response.erreur == null) {
       Navigator.of(context).pop();
     } else if (response.erreur == unauthorized) {
@@ -268,7 +269,11 @@ class _AccueilState extends State<Accueil> {
                             title: Text("FMT"),
                             content: Text("Voulez-vous faire une transaction?"),
                             actions: [
-                              TextButton(onPressed: () {}, child: Text("Non")),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("Non")),
                               TextButton(
                                   onPressed: () {
                                     setState(() {
