@@ -1,11 +1,12 @@
 //-----------------requete reussi-------------------
 import 'package:flutter/material.dart';
 
-const baseURL = 'http://192.168.0.101:82/api';
+const baseURL = 'http://192.168.1.103:82/api';
 const loginURL = baseURL + '/loginAgent';
 const depotURL = baseURL + '/depot';
 const retraitURL = baseURL + '/retrait';
 const userURL = baseURL + '/retrait';
+const deviseURL = baseURL + '/listeDevise';
 
 //---------------erreur------------------------------
 const serverError = "Erreur de la connexion";
