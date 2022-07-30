@@ -7,6 +7,7 @@ import 'package:fmt/constant.dart';
 import 'package:fmt/models/api_response.dart';
 import 'package:fmt/screens/login.dart';
 import 'package:fmt/services/depot.service.dart';
+import 'package:dropdownfield/dropdownfield.dart';
 
 class Accueil extends StatefulWidget {
   const Accueil({Key? key}) : super(key: key);
@@ -18,11 +19,10 @@ class Accueil extends StatefulWidget {
 class _AccueilState extends State<Accueil> {
   //pour le depot
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
-  TextEditingController txtNum_envoie = TextEditingController();
+  TextEditingController txtNumEnvoie = TextEditingController();
   TextEditingController txtExp = TextEditingController();
   TextEditingController txtBenefice = TextEditingController();
   TextEditingController txtTel = TextEditingController();
-  TextEditingController txtAgence = TextEditingController();
   TextEditingController txtPays = TextEditingController();
   TextEditingController txtMontant = TextEditingController();
   TextEditingController txtDevise = TextEditingController();
@@ -30,21 +30,23 @@ class _AccueilState extends State<Accueil> {
   //depot
   bool loading = false;
   void _createDepot() async {
-    ApiResponse response = await DepotUser(
-        txtNum_envoie.text,
+    ApiResponse response = await depotUser(
+        txtNumEnvoie.text,
         txtMontant.text,
         txtDevise.text,
         txtExp.text,
         txtBenefice.text,
         txtTel.text,
-        txtAgence.text,
         txtPays.text);
 
     if (response.erreur == null) {
       Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Argent envoyé avec success'),
+      ));
     } else if (response.erreur == unauthorized) {
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+          MaterialPageRoute(builder: (context) => Accueil()), (route) => false);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('${response.erreur}'),
@@ -54,8 +56,9 @@ class _AccueilState extends State<Accueil> {
       });
     }
   }
-  //fin depot
 
+  //fin depot
+  final lesPays = ['RDC', 'RCA', 'CONGO'];
   @override
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
@@ -150,7 +153,7 @@ class _AccueilState extends State<Accueil> {
                 TextFormField(
                   keyboardType: TextInputType.text,
                   validator: (val) => val!.isEmpty ? 'Nom d\'envoi' : null,
-                  controller: txtNum_envoie,
+                  controller: txtNumEnvoie,
                   decoration: InputDecoration(
                       labelText: 'Numero d\'envoi',
                       contentPadding: EdgeInsets.all(10),
@@ -245,6 +248,16 @@ class _AccueilState extends State<Accueil> {
                           borderSide:
                               BorderSide(width: 1, color: Colors.black))),
                 ),
+                DropDownField(
+                  controller: txtPays,
+                  hintText: "Selectionner un pays",
+                  items: cities,
+                  onValueChanged: ((value) {
+                    setState(() {
+                      selecCity = value;
+                    });
+                  }),
+                ),
                 Container(
                   padding: EdgeInsets.all(15),
                   decoration: const BoxDecoration(
@@ -338,6 +351,8 @@ class _AccueilState extends State<Accueil> {
   }
 }
 
+String selecCity = "";
+List<String> cities = ["RDC", "RCA"];
 @override
 Widget build(BuildContext context) {
   // TODO: implement build

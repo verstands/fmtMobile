@@ -5,7 +5,7 @@ class Depot {
   String? expediteur;
   String? beneficiaire;
   String? phone;
-  String? agence;
+
   String? pays;
 
   Depot(
@@ -15,7 +15,6 @@ class Depot {
       this.expediteur,
       this.beneficiaire,
       this.phone,
-      this.agence,
       this.pays});
 
   factory Depot.fromJson(Map<String, dynamic> json) {
@@ -26,7 +25,6 @@ class Depot {
         expediteur: json['expediteur'],
         beneficiaire: json['beneficiaire'],
         phone: json['phone'],
-        agence: json['agence'],
         pays: json['pays']);
   }
 }

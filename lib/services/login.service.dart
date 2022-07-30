@@ -42,7 +42,6 @@ Future<ApiResponse> getUserDetail() async {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token'
     });
-    print(response);
 
     if (response.statusCode == 200) {
       apiResponse.data = Agence.fromJson(jsonDecode(response.body));

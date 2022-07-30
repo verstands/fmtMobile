@@ -4,35 +4,37 @@ import 'package:fmt/constant.dart';
 import 'package:fmt/models/api_response.dart';
 import 'package:fmt/models/depot.model.dart';
 import 'package:fmt/models/devise.model.dart';
+import 'package:fmt/models/pays.model.dart';
 import 'package:fmt/services/login.service.dart';
 import 'package:http/http.dart' as http;
 
-Future<ApiResponse> DepotUser(
-    String num_envoi,
+Future<ApiResponse> depotUser(
+    String code,
     String montant_envoi,
-    String devise,
+    String id_devise,
     String expediteur,
     String beneficiaire,
-    String phone,
-    String agence,
-    String pays) async {
+    String phone_exp,
+    String id_pays) async {
   ApiResponse apiResponse = ApiResponse();
   try {
-    String token = await getToken();
+    //String token = await getToken();
+    String token = "80|qvIRcHuoWD4CvGED0QbHOmdIbkb8OdDft66FWMEe";
+
     final response = await http.post(
       Uri.parse(depotURL),
-      headers: {'Accept': 'application/json', 'Autorization': 'Bearer $token'},
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
       body: {
-        'num_envoi': num_envoi,
+        'code': code,
         'montant_envoi': montant_envoi,
-        'id_devise': devise,
+        'id_devise': id_devise,
         'expediteur': expediteur,
         'beneficiaire': beneficiaire,
-        'phone_exp': phone,
-        'id_agence': agence,
-        'id_pays': pays
+        'phone_exp': phone_exp,
+        'id_pays': id_pays
       },
     );
+
     switch (response.statusCode) {
       case 200:
         apiResponse.data = jsonDecode(response.body);
@@ -54,20 +56,69 @@ Future<ApiResponse> DepotUser(
   return apiResponse;
 }
 
+//Les pays
 Future<ApiResponse> getPays() async {
   ApiResponse apiResponse = ApiResponse();
   try {
-    String token = await getToken();
-    final response = await http.get(Uri.parse(userURL), headers: {
+    //String token = await getToken();
+    String token = "80|qvIRcHuoWD4CvGED0QbHOmdIbkb8OdDft66FWMEe";
+
+    final response = await http.get(Uri.parse(payseURL), headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token'
     });
-    if (response.statusCode == 200) {
-      apiResponse.data = Devise.fromJson(jsonDecode(response.body));
-    } else if (response.statusCode == 400) {
-      apiResponse.erreur = unauthorized;
-    } else {
-      apiResponse.erreur = somethingwentwrong;
+    switch (response.statusCode) {
+      case 200:
+        apiResponse.data = jsonDecode(response.body)['message']
+            .map((p) => Pays.fromJson(p))
+            .toList();
+        apiResponse.data as List<dynamic>;
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['message'];
+        apiResponse.erreur = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 401:
+        apiResponse.erreur = unauthorized;
+        break;
+      default:
+        apiResponse.erreur = somethingwentwrong;
+        break;
+    }
+  } catch (e) {
+    apiResponse.erreur = serverError;
+  }
+  return apiResponse;
+}
+
+//Les devises
+Future<ApiResponse> getDevise() async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    //String token = await getToken();
+    String token = "80|qvIRcHuoWD4CvGED0QbHOmdIbkb8OdDft66FWMEe";
+
+    final response = await http.get(Uri.parse(deviseURL), headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
+    switch (response.statusCode) {
+      case 200:
+        apiResponse.data = jsonDecode(response.body)['message']
+            .map((p) => Devise.fromJson(p))
+            .toList();
+        apiResponse.data as List<dynamic>;
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['message'];
+        apiResponse.erreur = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 401:
+        apiResponse.erreur = unauthorized;
+        break;
+      default:
+        apiResponse.erreur = somethingwentwrong;
+        break;
     }
   } catch (e) {
     apiResponse.erreur = serverError;

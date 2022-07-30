@@ -38,7 +38,6 @@ class _LoginState extends State<Login> {
   void _saveAndRedirectToHome(Agence agence) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', agence.token ?? '');
-    await pref.setInt('id', agence.id ?? 0);
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => Accueil()), (route) => false);
   }
@@ -55,7 +54,6 @@ class _LoginState extends State<Login> {
           child: ListView(
             padding: EdgeInsets.all(32),
             children: [
-              const Image(image: AssetImage('assets/logo/user.PNG')),
               TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   controller: txtEmail,

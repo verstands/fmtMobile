@@ -1,16 +1,17 @@
 //-----------------requete reussi-------------------
 import 'package:flutter/material.dart';
 
-const baseURL = 'https://api-transfert.fastmoneytransfert.com/api';
+const baseURL = 'http://192.168.1.103:82/api';
 const loginURL = baseURL + '/loginAgent';
 const depotURL = baseURL + '/depot';
 const retraitURL = baseURL + '/retrait';
 const userURL = baseURL + '/retrait';
 const deviseURL = baseURL + '/listeDevise';
+const payseURL = baseURL + '/listPays';
 
 //---------------erreur------------------------------
 const serverError = "Erreur de la connexion";
-const unauthorized = "Agent incrrect ";
+const unauthorized = "Erreur grave ";
 const somethingwentwrong = "Quelque chose s'est mal passé, encore une fois";
 
 //input decoration
