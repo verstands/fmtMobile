@@ -19,7 +19,7 @@ Future<ApiResponse> depotUser(
   ApiResponse apiResponse = ApiResponse();
   try {
     //String token = await getToken();
-    String token = "80|qvIRcHuoWD4CvGED0QbHOmdIbkb8OdDft66FWMEe";
+    String token = "144|DyOrGf0sVE8ffEipGOoFcygByehErZaahm7MbXRR";
 
     final response = await http.post(
       Uri.parse(depotURL),
@@ -61,7 +61,7 @@ Future<ApiResponse> getPays() async {
   ApiResponse apiResponse = ApiResponse();
   try {
     //String token = await getToken();
-    String token = "80|qvIRcHuoWD4CvGED0QbHOmdIbkb8OdDft66FWMEe";
+    String token = "139|yoTlUUeUOknSqRyrGcurGJa4kmilKOdYEtooCIz6";
 
     final response = await http.get(Uri.parse(payseURL), headers: {
       'Accept': 'application/json',
@@ -96,7 +96,7 @@ Future<ApiResponse> getDevise() async {
   ApiResponse apiResponse = ApiResponse();
   try {
     //String token = await getToken();
-    String token = "80|qvIRcHuoWD4CvGED0QbHOmdIbkb8OdDft66FWMEe";
+    String token = "139|yoTlUUeUOknSqRyrGcurGJa4kmilKOdYEtooCIz6";
 
     final response = await http.get(Uri.parse(deviseURL), headers: {
       'Accept': 'application/json',
@@ -111,6 +111,42 @@ Future<ApiResponse> getDevise() async {
         break;
       case 422:
         final errors = jsonDecode(response.body)['message'];
+        apiResponse.erreur = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 401:
+        apiResponse.erreur = unauthorized;
+        break;
+      default:
+        apiResponse.erreur = somethingwentwrong;
+        break;
+    }
+  } catch (e) {
+    apiResponse.erreur = serverError;
+  }
+  return apiResponse;
+}
+
+//code
+Future<ApiResponse> getCode() async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    //String token = await getToken();
+    String token = "139|yoTlUUeUOknSqRyrGcurGJa4kmilKOdYEtooCIz6";
+
+    final response = await http.get(Uri.parse(codeURL), headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
+    switch (response.statusCode) {
+      case 200:
+        apiResponse.data = jsonDecode(response.body)['code']
+            .map((p) => Depot.fromJson(p))
+            .toList();
+        apiResponse.data as List<dynamic>;
+        print(apiResponse.data);
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['code'];
         apiResponse.erreur = errors[errors.keys.elementAt(0)][0];
         break;
       case 401:

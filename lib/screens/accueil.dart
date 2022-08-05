@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
@@ -7,7 +9,7 @@ import 'package:fmt/constant.dart';
 import 'package:fmt/models/api_response.dart';
 import 'package:fmt/screens/login.dart';
 import 'package:fmt/services/depot.service.dart';
-import 'package:dropdownfield/dropdownfield.dart';
+import 'package:fmt/services/retrait.service.dart';
 
 class Accueil extends StatefulWidget {
   const Accueil({Key? key}) : super(key: key);
@@ -17,7 +19,37 @@ class Accueil extends StatefulWidget {
 }
 
 class _AccueilState extends State<Accueil> {
+  bool loading = false;
+  //retrait
+  final GlobalKey<FormState> formkey1 = GlobalKey<FormState>();
+  TextEditingController txtverifi = TextEditingController();
+
+  void _AgenceCode() async {
+    ApiResponse response = await codeAgence(txtverifi.text);
+    if (response == null) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Argent envoyé avec success'),
+      ));
+    } else if (response.erreur == unauthorized) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Unauthenticated'),
+      ));
+      setState(() {
+        loading = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.erreur}'),
+      ));
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
   //pour le depot
+  List<dynamic> code = [];
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController txtNumEnvoie = TextEditingController();
   TextEditingController txtExp = TextEditingController();
@@ -28,7 +60,7 @@ class _AccueilState extends State<Accueil> {
   TextEditingController txtDevise = TextEditingController();
   //fin de depot
   //depot
-  bool loading = false;
+
   void _createDepot() async {
     ApiResponse response = await depotUser(
         txtNumEnvoie.text,
@@ -45,8 +77,9 @@ class _AccueilState extends State<Accueil> {
         content: Text('Argent envoyé avec success'),
       ));
     } else if (response.erreur == unauthorized) {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => Accueil()), (route) => false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Unauthenticated'),
+      ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('${response.erreur}'),
@@ -58,7 +91,23 @@ class _AccueilState extends State<Accueil> {
   }
 
   //fin depot
-  final lesPays = ['RDC', 'RCA', 'CONGO'];
+
+  Future<void> retrieveCode() async {
+    ApiResponse response = await getCode();
+    if (response.erreur == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("oh"),
+      ));
+    } else if (response.erreur == unauthorized) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.erreur}'),
+      ));
+    }
+  }
+
   @override
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
@@ -70,74 +119,77 @@ class _AccueilState extends State<Accueil> {
     });
   }
 
+  List<String> items = ["RDC", "RCA"];
+  String? value;
   Widget build(BuildContext context) {
     List<Widget> _widgetOptions = <Widget>[
       Container(
         padding: EdgeInsets.all(10),
-        child: ListView(children: [
-          ListTile(
-            leading: const CircleAvatar(
-              radius: 25,
-              backgroundImage: AssetImage(
-                "assets/logo/dollars.png",
-              ),
-            ),
-            title: const Text(
-              'Nombre des entrées',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
-            subtitle: const Text(
-              '120',
-              style: TextStyle(color: Colors.red),
-            ),
-            trailing:
-                IconButton(onPressed: null, icon: Icon(Icons.arrow_forward)),
-          ),
-          Divider(height: 10),
-          // nombre des sortie
-          ListTile(
-            leading: const CircleAvatar(
-              radius: 25,
-              backgroundImage: AssetImage(
-                "assets/logo/users.png",
-              ),
-            ),
-            title: const Text(
-              'Nombre des sorties',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
-            subtitle: const Text('200'),
-            trailing:
-                IconButton(onPressed: null, icon: Icon(Icons.arrow_forward)),
-          ),
-        ]),
+        child: ListView(children: []),
       ),
       Container(
         padding: EdgeInsets.all(15),
         child: Form(
+          key: formkey1,
           child: ListView(
             children: [
               TextFormField(
-                keyboardType: TextInputType.emailAddress,
+                controller: txtverifi,
+                keyboardType: TextInputType.text,
+                validator: (val) => val!.isEmpty ? 'champ vide' : null,
                 decoration: InputDecoration(
                     labelText: 'Entrez le code',
                     contentPadding: EdgeInsets.all(10),
                     border: OutlineInputBorder(
                         borderSide: BorderSide(width: 1, color: Colors.black))),
               ),
-              Container(
-                padding: EdgeInsets.all(15),
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(2)),
-                ),
-                height: 85,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      shadowColor: const Color(0xFF000000)),
-                  onPressed: () {},
-                  child: const Text('Verifiez'),
-                ),
-              ),
+              loading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(15),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(2)),
+                      ),
+                      height: 85,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            shadowColor: const Color(0xFF000000)),
+                        onPressed: () {
+                          if (formkey1.currentState!.validate()) {
+                            /*showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text("FMT"),
+                                content: Text(
+                                    'Voulez-vous faire un retrait \n code : $txtverifi'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Non")),
+                                  TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          loading = true;
+                                          _useCOde();
+                                        });
+                                      },
+                                      child: Text("Oui"))
+                                ],
+                              ),
+                            );*/
+                            setState(() {
+                              loading = true;
+                              _AgenceCode();
+                            });
+                          }
+                        },
+                        child: const Text('Verifiez'),
+                      ),
+                    ),
             ],
           ),
         ),
@@ -155,7 +207,7 @@ class _AccueilState extends State<Accueil> {
                   validator: (val) => val!.isEmpty ? 'Nom d\'envoi' : null,
                   controller: txtNumEnvoie,
                   decoration: InputDecoration(
-                      labelText: 'Numero d\'envoi',
+                      labelText: 'Code',
                       contentPadding: EdgeInsets.all(10),
                       border: OutlineInputBorder(
                           borderSide:
@@ -248,16 +300,6 @@ class _AccueilState extends State<Accueil> {
                           borderSide:
                               BorderSide(width: 1, color: Colors.black))),
                 ),
-                DropDownField(
-                  controller: txtPays,
-                  hintText: "Selectionner un pays",
-                  items: cities,
-                  onValueChanged: ((value) {
-                    setState(() {
-                      selecCity = value;
-                    });
-                  }),
-                ),
                 Container(
                   padding: EdgeInsets.all(15),
                   decoration: const BoxDecoration(
@@ -305,10 +347,23 @@ class _AccueilState extends State<Accueil> {
               ],
             )),
       ),
-      Text(
-        'Index 3: Settings',
-        style: optionStyle,
-      ),
+      ListView(children: [
+        DataTable(columns: [
+          DataColumn(label: Text('Pays')),
+          DataColumn(label: Text('Agence')),
+          DataColumn(label: Text('Nom exp')),
+          DataColumn(label: Text('Nom benef')),
+          DataColumn(label: Text('Tel')),
+          DataColumn(label: Text('Montant')),
+          DataColumn(label: Text('Devise')),
+        ], rows: [
+          DataRow(cells: [
+            DataCell(Text('rabby')),
+            DataCell(Text('mbamu')),
+            DataCell(Text('Kikwele')),
+          ]),
+        ]),
+      ])
     ];
     return Scaffold(
       appBar: AppBar(
@@ -351,8 +406,6 @@ class _AccueilState extends State<Accueil> {
   }
 }
 
-String selecCity = "";
-List<String> cities = ["RDC", "RCA"];
 @override
 Widget build(BuildContext context) {
   // TODO: implement build

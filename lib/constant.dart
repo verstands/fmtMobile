@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 const baseURL = 'http://192.168.1.103:82/api';
 const loginURL = baseURL + '/loginAgent';
 const depotURL = baseURL + '/depot';
-const retraitURL = baseURL + '/retrait';
 const userURL = baseURL + '/retrait';
 const deviseURL = baseURL + '/listeDevise';
 const payseURL = baseURL + '/listPays';
+const codeURL = baseURL + '/codeAgence';
+const useCode = baseURL + '/gereteurCode';
 
 //---------------erreur------------------------------
 const serverError = "Erreur de la connexion";
-const unauthorized = "Erreur grave ";
+const unauthorized = "Erreur de la base des données ";
 const somethingwentwrong = "Quelque chose s'est mal passé, encore une fois";
 
 //input decoration

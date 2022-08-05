@@ -1,15 +1,15 @@
 class Pays {
   int? id;
   String? nom;
-  String? code_pays;
+  String? code;
 
   Pays({
     this.id,
     this.nom,
-    this.code_pays,
+    this.code,
   });
 
   factory Pays.fromJson(Map<String, dynamic> json) {
-    return Pays(id: json['id'], nom: json['nom'], code_pays: json['code_pays']);
+    return Pays(id: json['id'], nom: json['nom'], code: json['code']);
   }
 }
