@@ -7,8 +7,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fmt/constant.dart';
 import 'package:fmt/models/api_response.dart';
+import 'package:fmt/models/hystorique.model.dart';
 import 'package:fmt/screens/login.dart';
 import 'package:fmt/services/depot.service.dart';
+import 'package:fmt/services/hystorique.service.dart';
 import 'package:fmt/services/retrait.service.dart';
 
 class Accueil extends StatefulWidget {
@@ -20,13 +22,43 @@ class Accueil extends StatefulWidget {
 
 class _AccueilState extends State<Accueil> {
   bool loading = false;
+  bool _loadingHy = false;
+  List<dynamic> _hysto = [];
+  final items = ['Item1', 'Item2', 'Items3'];
+
+  //historique
+  void _hystorique() async {
+    ApiResponse response = await gethistorique();
+    if (response.erreur == null) {
+      setState(() {
+        _hysto = response.data as List<dynamic>;
+        _loadingHy = _loadingHy ? !_loadingHy : _loadingHy;
+      });
+    } else if (response.erreur == unauthorized) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Unauthenticated'),
+      ));
+      setState(() {
+        loading = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.erreur}'),
+      ));
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  //fin historique
   //retrait
   final GlobalKey<FormState> formkey1 = GlobalKey<FormState>();
   TextEditingController txtverifi = TextEditingController();
 
   void _AgenceCode() async {
     ApiResponse response = await codeAgence(txtverifi.text);
-    if (response == null) {
+    if (response.erreur == null) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Argent envoyé avec success'),
@@ -115,11 +147,11 @@ class _AccueilState extends State<Accueil> {
 
   void _onItemTapped(int index) {
     setState(() {
+      _hystorique();
       _selectedIndex = index;
     });
   }
 
-  List<String> items = ["RDC", "RCA"];
   String? value;
   Widget build(BuildContext context) {
     List<Widget> _widgetOptions = <Widget>[
@@ -347,23 +379,37 @@ class _AccueilState extends State<Accueil> {
               ],
             )),
       ),
-      ListView(children: [
-        DataTable(columns: [
-          DataColumn(label: Text('Pays')),
-          DataColumn(label: Text('Agence')),
-          DataColumn(label: Text('Nom exp')),
-          DataColumn(label: Text('Nom benef')),
-          DataColumn(label: Text('Tel')),
-          DataColumn(label: Text('Montant')),
-          DataColumn(label: Text('Devise')),
-        ], rows: [
-          DataRow(cells: [
-            DataCell(Text('rabby')),
-            DataCell(Text('mbamu')),
-            DataCell(Text('Kikwele')),
-          ]),
-        ]),
-      ])
+      ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          Hystorique hystoriques = _hysto[index];
+
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SingleChildScrollView(
+              child: DataTable(columns: [
+                DataColumn(label: Text('Pays')),
+                DataColumn(label: Text('Agence')),
+                DataColumn(label: Text('Nom exp')),
+                DataColumn(label: Text('Nom benef')),
+                DataColumn(label: Text('Tel')),
+                DataColumn(label: Text('Montant')),
+                DataColumn(label: Text('Devise')),
+              ], rows: [
+                DataRow(selected: true, cells: [
+                  DataCell(Text("${hystoriques.nom}")),
+                  DataCell(Text('${hystoriques.nomAgence}')),
+                  DataCell(Text('${hystoriques.expediteur}')),
+                  DataCell(Text('${hystoriques.beneficiaire}')),
+                  DataCell(Text('${hystoriques.phoneExp}')),
+                  DataCell(Text('${hystoriques.montantEnvoi}')),
+                  DataCell(Text('${hystoriques.intitule}')),
+                ]),
+              ]),
+            ),
+          );
+        },
+        itemCount: 1,
+      )
     ];
     return Scaffold(
       appBar: AppBar(

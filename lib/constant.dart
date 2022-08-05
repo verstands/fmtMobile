@@ -9,6 +9,7 @@ const deviseURL = baseURL + '/listeDevise';
 const payseURL = baseURL + '/listPays';
 const codeURL = baseURL + '/codeAgence';
 const useCode = baseURL + '/gereteurCode';
+const HystoriqueURL = baseURL + '/historiqueAgence';
 
 //---------------erreur------------------------------
 const serverError = "Erreur de la connexion";
