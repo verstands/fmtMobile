@@ -54,6 +54,12 @@ class _LoginState extends State<Login> {
           child: ListView(
             padding: EdgeInsets.all(32),
             children: [
+              Center(
+                child: Icon(
+                  Icons.person,
+                  size: 90,
+                ),
+              ),
               TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   controller: txtEmail,
@@ -72,7 +78,9 @@ class _LoginState extends State<Login> {
               ),
               loading
                   ? Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
                     )
                   : Container(
                       padding: EdgeInsets.all(15),
@@ -83,11 +91,11 @@ class _LoginState extends State<Login> {
                       child: TextButton(
                         child: Text(
                           "Se connecter",
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.orange),
                         ),
                         style: ButtonStyle(
                             backgroundColor: MaterialStateColor.resolveWith(
-                                (states) => Colors.blue),
+                                (states) => Colors.black),
                             padding: MaterialStateProperty.resolveWith(
                                 (states) =>
                                     EdgeInsets.symmetric(vertical: 10))),

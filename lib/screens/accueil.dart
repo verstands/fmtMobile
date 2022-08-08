@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -7,8 +8,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fmt/constant.dart';
 import 'package:fmt/models/api_response.dart';
+import 'package:fmt/models/code.model.dart';
 import 'package:fmt/models/hystorique.model.dart';
 import 'package:fmt/screens/login.dart';
+import 'package:fmt/screens/profil.dart';
 import 'package:fmt/services/depot.service.dart';
 import 'package:fmt/services/hystorique.service.dart';
 import 'package:fmt/services/retrait.service.dart';
@@ -24,9 +27,17 @@ class _AccueilState extends State<Accueil> {
   bool loading = false;
   bool _loadingHy = false;
   List<dynamic> _hysto = [];
-  final items = ['Item1', 'Item2', 'Items3'];
-
+  List<dynamic> _pays = [];
+  String dropdownValue = 'One';
+  List<String> itmes = ['item1', 'items2'];
+  String? selectItem = 'item1';
   //historique
+  Future<void> _refresh() {
+    return Future.delayed(
+      Duration(seconds: 0),
+    );
+  }
+
   void _hystorique() async {
     ApiResponse response = await gethistorique();
     if (response.erreur == null) {
@@ -52,11 +63,13 @@ class _AccueilState extends State<Accueil> {
   }
 
   //fin historique
+
   //retrait
+
   final GlobalKey<FormState> formkey1 = GlobalKey<FormState>();
   TextEditingController txtverifi = TextEditingController();
 
-  void _AgenceCode() async {
+  void _agenceCode() async {
     ApiResponse response = await codeAgence(txtverifi.text);
     if (response.erreur == null) {
       Navigator.of(context).pop();
@@ -65,7 +78,7 @@ class _AccueilState extends State<Accueil> {
       ));
     } else if (response.erreur == unauthorized) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Unauthenticated'),
+        content: Text('Unauthenticatedaaaaaaaaaaaa'),
       ));
       setState(() {
         loading = false;
@@ -81,7 +94,6 @@ class _AccueilState extends State<Accueil> {
   }
 
   //pour le depot
-  List<dynamic> code = [];
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController txtNumEnvoie = TextEditingController();
   TextEditingController txtExp = TextEditingController();
@@ -123,13 +135,13 @@ class _AccueilState extends State<Accueil> {
   }
 
   //fin depot
-
-  Future<void> retrieveCode() async {
+  String? code;
+  Future<void> _retrieveCode() async {
     ApiResponse response = await getCode();
     if (response.erreur == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("oh"),
-      ));
+      setState(() {
+        txtNumEnvoie.text = response.data.toString();
+      });
     } else if (response.erreur == unauthorized) {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => Login()), (route) => false);
@@ -148,6 +160,7 @@ class _AccueilState extends State<Accueil> {
   void _onItemTapped(int index) {
     setState(() {
       _hystorique();
+      _retrieveCode();
       _selectedIndex = index;
     });
   }
@@ -157,7 +170,92 @@ class _AccueilState extends State<Accueil> {
     List<Widget> _widgetOptions = <Widget>[
       Container(
         padding: EdgeInsets.all(10),
-        child: ListView(children: []),
+        child: GridView.count(
+          crossAxisCount: 2,
+          crossAxisSpacing: 5,
+          mainAxisSpacing: 5,
+          children: [
+            Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20), color: Colors.red),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.arrow_forward,
+                      size: 50,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      "Retrait",
+                      style: TextStyle(color: Colors.white, fontSize: 30),
+                    ),
+                    Text(
+                      "30",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    )
+                  ],
+                )),
+            Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.yellow),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.search,
+                      size: 50,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      "Search",
+                      style: TextStyle(color: Colors.white, fontSize: 30),
+                    ),
+                  ],
+                )),
+            Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.green),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.arrow_back,
+                      size: 50,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      "Retrait",
+                      style: TextStyle(color: Colors.white, fontSize: 30),
+                    ),
+                    Text(
+                      "30",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    )
+                  ],
+                )),
+            Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.grey),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.person,
+                      size: 50,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      "Profile",
+                      style: TextStyle(color: Colors.white, fontSize: 30),
+                    ),
+                  ],
+                )),
+          ],
+        ),
       ),
       Container(
         padding: EdgeInsets.all(15),
@@ -185,9 +283,13 @@ class _AccueilState extends State<Accueil> {
                         borderRadius: BorderRadius.all(Radius.circular(2)),
                       ),
                       height: 85,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            shadowColor: const Color(0xFF000000)),
+                      child: TextButton(
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateColor.resolveWith(
+                                (states) => Colors.black),
+                            padding: MaterialStateProperty.resolveWith(
+                                (states) =>
+                                    EdgeInsets.symmetric(vertical: 10))),
                         onPressed: () {
                           if (formkey1.currentState!.validate()) {
                             /*showDialog(
@@ -215,11 +317,14 @@ class _AccueilState extends State<Accueil> {
                             );*/
                             setState(() {
                               loading = true;
-                              _AgenceCode();
+                              _agenceCode();
                             });
                           }
                         },
-                        child: const Text('Verifiez'),
+                        child: const Text(
+                          'Verifiez',
+                          style: TextStyle(color: Colors.orange),
+                        ),
                       ),
                     ),
             ],
@@ -238,6 +343,8 @@ class _AccueilState extends State<Accueil> {
                   keyboardType: TextInputType.text,
                   validator: (val) => val!.isEmpty ? 'Nom d\'envoi' : null,
                   controller: txtNumEnvoie,
+                  enabled: false,
+                  obscureText: true,
                   decoration: InputDecoration(
                       labelText: 'Code',
                       contentPadding: EdgeInsets.all(10),
@@ -341,11 +448,11 @@ class _AccueilState extends State<Accueil> {
                   child: TextButton(
                     child: Text(
                       "Envoyez",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.orange),
                     ),
                     style: ButtonStyle(
                         backgroundColor: MaterialStateColor.resolveWith(
-                            (states) => Colors.blue),
+                            (states) => Colors.black),
                         padding: MaterialStateProperty.resolveWith(
                             (states) => EdgeInsets.symmetric(vertical: 10))),
                     onPressed: () {
@@ -383,9 +490,10 @@ class _AccueilState extends State<Accueil> {
         itemBuilder: (BuildContext context, int index) {
           Hystorique hystoriques = _hysto[index];
 
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
+          return RefreshIndicator(
+            onRefresh: _refresh,
             child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
               child: DataTable(columns: [
                 DataColumn(label: Text('Pays')),
                 DataColumn(label: Text('Agence')),
@@ -408,14 +516,25 @@ class _AccueilState extends State<Accueil> {
             ),
           );
         },
-        itemCount: 1,
+        itemCount: _hysto.length,
       )
     ];
     return Scaffold(
       appBar: AppBar(
         title: const Text('FMT'),
         backgroundColor: const Color(0xFF000000),
+        actions: [
+          SizedBox(
+            child: IconButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Profile()));
+                },
+                icon: Icon(Icons.person)),
+          ),
+        ],
       ),
+      backgroundColor: Colors.white30,
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),

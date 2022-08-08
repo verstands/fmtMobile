@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fmt/constant.dart';
 import 'package:fmt/models/api_response.dart';
+import 'package:fmt/models/code.model.dart';
 import 'package:fmt/models/depot.model.dart';
 import 'package:fmt/models/devise.model.dart';
 import 'package:fmt/models/pays.model.dart';
@@ -61,7 +62,7 @@ Future<ApiResponse> getPays() async {
   ApiResponse apiResponse = ApiResponse();
   try {
     //String token = await getToken();
-    String token = "139|yoTlUUeUOknSqRyrGcurGJa4kmilKOdYEtooCIz6";
+    String token = "144|DyOrGf0sVE8ffEipGOoFcygByehErZaahm7MbXRR";
 
     final response = await http.get(Uri.parse(payseURL), headers: {
       'Accept': 'application/json',
@@ -69,7 +70,7 @@ Future<ApiResponse> getPays() async {
     });
     switch (response.statusCode) {
       case 200:
-        apiResponse.data = jsonDecode(response.body)['message']
+        apiResponse.data = jsonDecode(response.body)['data']
             .map((p) => Pays.fromJson(p))
             .toList();
         apiResponse.data as List<dynamic>;
@@ -131,19 +132,15 @@ Future<ApiResponse> getCode() async {
   ApiResponse apiResponse = ApiResponse();
   try {
     //String token = await getToken();
-    String token = "139|yoTlUUeUOknSqRyrGcurGJa4kmilKOdYEtooCIz6";
+    String token = "144|DyOrGf0sVE8ffEipGOoFcygByehErZaahm7MbXRR";
 
-    final response = await http.get(Uri.parse(codeURL), headers: {
+    final response = await http.get(Uri.parse(getcodeURL), headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token'
     });
     switch (response.statusCode) {
       case 200:
-        apiResponse.data = jsonDecode(response.body)['code']
-            .map((p) => Depot.fromJson(p))
-            .toList();
-        apiResponse.data as List<dynamic>;
-        print(apiResponse.data);
+        apiResponse.data = jsonDecode(response.body)['code'];
         break;
       case 422:
         final errors = jsonDecode(response.body)['code'];
