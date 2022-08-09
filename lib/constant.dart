@@ -1,7 +1,7 @@
 //-----------------requete reussi-------------------
 import 'package:flutter/material.dart';
 
-const baseURL = 'http://192.168.1.103:82/api';
+const baseURL = 'https://api-transfert.fastmoneytransfert.com/api';
 const loginURL = baseURL + '/loginAgent';
 const depotURL = baseURL + '/depot';
 const userURL = baseURL + '/retrait';
@@ -10,6 +10,7 @@ const payseURL = baseURL + '/listPays';
 const codeURL = baseURL + '/codeAgence';
 const getcodeURL = baseURL + '/gereteurCode';
 const HystoriqueURL = baseURL + '/historiqueAgence';
+const profileURL = baseURL + '/profile';
 
 //---------------erreur------------------------------
 const serverError = "Erreur de la connexion";

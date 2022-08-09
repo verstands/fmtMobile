@@ -28,6 +28,7 @@ class _AccueilState extends State<Accueil> {
   bool _loadingHy = false;
   List<dynamic> _hysto = [];
   List<dynamic> _pays = [];
+  List<dynamic> _agentcode = [];
   String dropdownValue = 'One';
   List<String> itmes = ['item1', 'items2'];
   String? selectItem = 'item1';
@@ -62,6 +63,31 @@ class _AccueilState extends State<Accueil> {
     }
   }
 
+  //pays
+  void _payss() async {
+    ApiResponse response = await getPays();
+    if (response.erreur == null) {
+      setState(() {
+        print(response.data as List<dynamic>);
+      });
+    } else if (response.erreur == unauthorized) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Unauthenticated'),
+      ));
+      setState(() {
+        loading = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.erreur}'),
+      ));
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+  //fin pays
+
   //fin historique
 
   //retrait
@@ -72,10 +98,8 @@ class _AccueilState extends State<Accueil> {
   void _agenceCode() async {
     ApiResponse response = await codeAgence(txtverifi.text);
     if (response.erreur == null) {
-      Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Argent envoyé avec success'),
-      ));
+      _agentcode = response.data as List<dynamic>;
+      print(_agentcode);
     } else if (response.erreur == unauthorized) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Unauthenticatedaaaaaaaaaaaa'),
@@ -161,6 +185,8 @@ class _AccueilState extends State<Accueil> {
     setState(() {
       _hystorique();
       _retrieveCode();
+      _payss();
+      _agenceCode();
       _selectedIndex = index;
     });
   }
@@ -438,6 +464,28 @@ class _AccueilState extends State<Accueil> {
                       border: OutlineInputBorder(
                           borderSide:
                               BorderSide(width: 1, color: Colors.black))),
+                ),
+                DropdownButton<String>(
+                  value: dropdownValue,
+                  icon: const Icon(Icons.arrow_downward),
+                  elevation: 16,
+                  style: const TextStyle(color: Colors.deepPurple),
+                  underline: Container(
+                    height: 2,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropdownValue = newValue!;
+                    });
+                  },
+                  items: <String>['One', 'Two', 'Free', 'Four']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                 ),
                 Container(
                   padding: EdgeInsets.all(15),

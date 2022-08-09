@@ -2,25 +2,23 @@ import 'dart:convert';
 
 import 'package:fmt/constant.dart';
 import 'package:fmt/models/api_response.dart';
-import 'package:fmt/models/hystorique.model.dart';
-import 'package:fmt/models/retrait.model.dart';
-import 'package:fmt/screens/accueil.dart';
+import 'package:fmt/screens/profil.dart';
 import 'package:http/http.dart' as http;
 
-Future<ApiResponse> codeAgence(String code) async {
+Future<ApiResponse> getprofile() async {
   ApiResponse apiResponse = ApiResponse();
   try {
     //String token = await getToken();
     String token = "131|NU3YjhgPSY7B70yRjioynkvkquiAbmqcv9yttUfm";
 
-    final response = await http.get(Uri.parse('$codeURL/$code'), headers: {
+    final response = await http.get(Uri.parse(profileURL), headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token'
     });
     switch (response.statusCode) {
       case 200:
         apiResponse.data = jsonDecode(response.body)['data']
-            .map((p) => Retrait.fromJson(p))
+            .map((p) => Profile.fromJson(p))
             .toList();
         apiResponse.data as List<dynamic>;
         break;
