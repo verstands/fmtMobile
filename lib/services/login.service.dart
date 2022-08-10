@@ -16,6 +16,11 @@ Future<ApiResponse> loginUser(String email, String password) async {
     switch (response.statusCode) {
       case 200:
         apiResponse.data = Agence.fromJson(jsonDecode(response.body));
+        SharedPreferences pref = await SharedPreferences.getInstance();
+        pref.setString(
+            'token', jsonDecode(response.body)['access_token'] ?? '');
+        pref.commit();
+        apiResponse.Ttoken = pref.getString('token');
         break;
       case 422:
         final errors = jsonDecode(response.body)['message'];

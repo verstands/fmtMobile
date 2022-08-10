@@ -21,7 +21,7 @@ Future<ApiResponse> depotUser(
   ApiResponse apiResponse = ApiResponse();
   try {
     //String token = await getToken();
-    String token = "131|NU3YjhgPSY7B70yRjioynkvkquiAbmqcv9yttUfm";
+    String token = await getToken();
 
     final response = await http.post(
       Uri.parse(depotURL),
@@ -63,7 +63,7 @@ Future<ApiResponse> getDevise() async {
   ApiResponse apiResponse = ApiResponse();
   try {
     //String token = await getToken();
-    String token = "131|NU3YjhgPSY7B70yRjioynkvkquiAbmqcv9yttUfm";
+    String token = await getToken();
 
     final response = await http.get(Uri.parse(deviseURL), headers: {
       'Accept': 'application/json',
@@ -98,7 +98,7 @@ Future<ApiResponse> getCode() async {
   ApiResponse apiResponse = ApiResponse();
   try {
     //String token = await getToken();
-    String token = "131|NU3YjhgPSY7B70yRjioynkvkquiAbmqcv9yttUfm";
+    String token = await getToken();
 
     final response = await http.get(Uri.parse(getcodeURL), headers: {
       'Accept': 'application/json',

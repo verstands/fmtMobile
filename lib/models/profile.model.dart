@@ -7,8 +7,8 @@ class Profile {
   String? phone;
   String? email;
   String? password;
-  Null? createdAt;
-  Null? updatedAt;
+  String? createdAt;
+  String? updatedAt;
 
   Profile(
       {this.id,

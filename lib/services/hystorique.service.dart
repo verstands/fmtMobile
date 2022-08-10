@@ -5,13 +5,14 @@ import 'package:fmt/models/api_response.dart';
 import 'package:fmt/models/hystorique.model.dart';
 import 'package:fmt/models/pays.model.dart';
 import 'package:fmt/screens/accueil.dart';
+import 'package:fmt/services/login.service.dart';
 import 'package:http/http.dart' as http;
 
 Future<ApiResponse> gethistorique() async {
   ApiResponse apiResponse = ApiResponse();
   try {
     //String token = await getToken();
-    String token = "131|NU3YjhgPSY7B70yRjioynkvkquiAbmqcv9yttUfm";
+    String token = await getToken();
 
     final response = await http.get(Uri.parse(HystoriqueURL), headers: {
       'Accept': 'application/json',
@@ -46,7 +47,7 @@ Future<ApiResponse> getPays() async {
   ApiResponse apiResponse = ApiResponse();
   try {
     //String token = await getToken();
-    String token = "131|NU3YjhgPSY7B70yRjioynkvkquiAbmqcv9yttUfm";
+    String token = await getToken();
 
     final response = await http.get(Uri.parse(payseURL), headers: {
       'Accept': 'application/json',

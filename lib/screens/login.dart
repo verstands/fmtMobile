@@ -24,7 +24,11 @@ class _LoginState extends State<Login> {
   void _loginUser() async {
     ApiResponse response = await loginUser(txtEmail.text, txtpassword.text);
     if (response.erreur == null) {
-      _saveAndRedirectToHome(response.data as Agence);
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.setString('token', response.Ttoken ?? '');
+      print(response.Ttoken);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Accueil()), (route) => false);
     } else {
       setState(() {
         loading = false;
@@ -35,9 +39,10 @@ class _LoginState extends State<Login> {
     }
   }
 
-  void _saveAndRedirectToHome(Agence agence) async {
+  void _saveAndRedirectToHome(Agence access_token) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    await pref.setString('token', agence.token ?? '');
+    pref.setString('token', access_token.access_token ?? '');
+    print(pref.getString('toekn'));
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => Accueil()), (route) => false);
   }

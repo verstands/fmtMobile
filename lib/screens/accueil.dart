@@ -98,8 +98,11 @@ class _AccueilState extends State<Accueil> {
   void _agenceCode() async {
     ApiResponse response = await codeAgence(txtverifi.text);
     if (response.erreur == null) {
-      _agentcode = response.data as List<dynamic>;
-      print(_agentcode);
+      setState(() {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('ok'),
+        ));
+      });
     } else if (response.erreur == unauthorized) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Unauthenticatedaaaaaaaaaaaa'),
@@ -159,7 +162,6 @@ class _AccueilState extends State<Accueil> {
   }
 
   //fin depot
-  String? code;
   Future<void> _retrieveCode() async {
     ApiResponse response = await getCode();
     if (response.erreur == null) {
@@ -186,7 +188,6 @@ class _AccueilState extends State<Accueil> {
       _hystorique();
       _retrieveCode();
       _payss();
-      _agenceCode();
       _selectedIndex = index;
     });
   }
