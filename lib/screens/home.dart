@@ -16,7 +16,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   void _test() {
     Timer(
-        const Duration(seconds: 1),
+        const Duration(seconds: 5),
         () => Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const Login())));
   }
@@ -32,7 +32,7 @@ class _HomeState extends State<Home> {
       title: 'FM',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFF000000),
+        scaffoldBackgroundColor: const Color.fromRGBO(17, 18, 12, 1),
       ),
       home: Scaffold(
         body: Column(
