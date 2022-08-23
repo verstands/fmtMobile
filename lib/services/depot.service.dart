@@ -36,7 +36,6 @@ Future<ApiResponse> depotUser(
         'id_pays': id_pays
       },
     );
-
     switch (response.statusCode) {
       case 200:
         apiResponse.data = jsonDecode(response.body);
@@ -93,11 +92,10 @@ Future<ApiResponse> getDevise() async {
   return apiResponse;
 }
 
-//code
+//getcode
 Future<ApiResponse> getCode() async {
   ApiResponse apiResponse = ApiResponse();
   try {
-    //String token = await getToken();
     String token = await getToken();
 
     final response = await http.get(Uri.parse(getcodeURL), headers: {

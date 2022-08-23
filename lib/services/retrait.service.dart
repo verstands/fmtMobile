@@ -37,3 +37,35 @@ Future<ApiResponse> codeAgence(String code) async {
   }
   return apiResponse;
 }
+
+//utliser le code
+Future<ApiResponse> UtiliserCode(String code) async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    String token = await getToken();
+    final response = await http.get(Uri.parse('$UtiliserCodeURL/$code'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    switch (response.statusCode) {
+      case 200:
+        apiResponse.erreur = jsonDecode(response.body)['message'];
+        break;
+      case 403:
+        apiResponse.erreur = jsonDecode(response.body)['message'];
+        break;
+      case 401:
+        apiResponse.erreur = jsonDecode(response.body)['message'];
+        ;
+        break;
+
+      default:
+        apiResponse.erreur = somethingwentwrong;
+        break;
+    }
+  } catch (e) {
+    apiResponse.erreur = serverError;
+  }
+  return apiResponse;
+}

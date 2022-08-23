@@ -23,7 +23,7 @@ Future<ApiResponse> loginUser(String email, String password) async {
         apiResponse.Ttoken = pref.getString('token');
         break;
       case 422:
-        final errors = jsonDecode(response.body)['message'];
+        final errors = jsonDecode(response.body)['errors'];
         apiResponse.erreur = errors[errors.keys.elementAt(0)][0];
         break;
       case 403:

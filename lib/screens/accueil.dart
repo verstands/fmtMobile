@@ -51,7 +51,6 @@ class _AccueilState extends State<Accueil> {
   int? idAg;
   String? idUser;
   Retrait? RT;
-  String aa = "sed";
   //refresh
   Future<void> _refresh() {
     return Future.delayed(
@@ -106,10 +105,32 @@ class _AccueilState extends State<Accueil> {
   }
   //fin pays
 
-  //fin historique
+  //Utiliser le code
+  void _utiliserCode() async {
+    ApiResponse response = await UtiliserCode(code!);
+    if (response.erreur == null) {
+      setState(() {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('${response.erreur}'),
+        ));
+      });
+    } else if (response.erreur == unauthorized) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+      setState(() {
+        loading = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.erreur}'),
+      ));
+      setState(() {
+        loading = false;
+      });
+    }
+  }
 
   //retrait
-
   final GlobalKey<FormState> formkey1 = GlobalKey<FormState>();
   TextEditingController txtverifi = TextEditingController();
 
@@ -127,6 +148,34 @@ class _AccueilState extends State<Accueil> {
         idPays = (RT!.idPays ?? "") as int?;
         dates = RT!.dates ?? "";
         idAg = (RT!.idAg ?? "") as int?;
+        loading = false;
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text("FMT"),
+            content: Text(
+                'Voulez-vous faire un retrait? \n\n code : $code \n Nom expediteur : $expediteur \n Nom beneficiare : $beneficiaire \n Telephone : $phoneExp \n Montant : $montantEnvoi \n Devise : $idDevise \n Pays : $idPays \n Agence : $idAg \n Date : $dates '),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    "Non",
+                    style: TextStyle(color: Colors.red),
+                  )),
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _utiliserCode();
+                      Navigator.of(context).pop();
+                    });
+                  },
+                  child: Text("Oui"))
+            ],
+          ),
+        );
       });
     } else if (response.erreur == unauthorized) {
       Navigator.of(context).pushAndRemoveUntil(
@@ -165,6 +214,7 @@ class _AccueilState extends State<Accueil> {
         txtBenefice.text,
         txtTel.text,
         txtPays.text);
+
     if (response.erreur == null) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -342,33 +392,9 @@ class _AccueilState extends State<Accueil> {
                                     EdgeInsets.symmetric(vertical: 10))),
                         onPressed: () {
                           if (formkey1.currentState!.validate()) {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text("FMT"),
-                                content: Text(
-                                    'Voulez-vous faire un retrait \n code : $aa'),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          Navigator.of(context).pop();
-                                          loading = false;
-                                        });
-                                      },
-                                      child: Text("Non")),
-                                  TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          loading = false;
-                                        });
-                                      },
-                                      child: Text("Oui"))
-                                ],
-                              ),
-                            );
                             setState(() {
                               loading = true;
+                              _agenceCode();
                             });
                           }
                         },
@@ -489,6 +515,28 @@ class _AccueilState extends State<Accueil> {
                       border: OutlineInputBorder(
                           borderSide:
                               BorderSide(width: 1, color: Colors.black))),
+                ),
+                DropdownButton<String>(
+                  value: dropdownValue,
+                  icon: const Icon(Icons.arrow_downward),
+                  elevation: 16,
+                  style: const TextStyle(color: Colors.deepPurple),
+                  underline: Container(
+                    height: 2,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropdownValue = newValue!;
+                    });
+                  },
+                  items: <String>['One', 'Two', 'Free', 'Four']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                 ),
                 Container(
                   padding: EdgeInsets.all(15),

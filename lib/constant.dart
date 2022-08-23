@@ -11,6 +11,7 @@ const codeURL = baseURL + '/codeAgence';
 const getcodeURL = baseURL + '/gereteurCode';
 const HystoriqueURL = baseURL + '/historiqueAgence';
 const profileURL = baseURL + '/profile';
+const UtiliserCodeURL = baseURL + '/codeUse';
 
 //---------------erreur------------------------------
 const serverError = "Erreur de la connexion";
