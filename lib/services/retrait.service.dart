@@ -16,14 +16,9 @@ Future<ApiResponse> codeAgence(String code) async {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token'
     });
-    print('$codeURL/$code');
-    print(jsonDecode(response.body)['data']);
     switch (response.statusCode) {
       case 200:
-        apiResponse.data = jsonDecode(response.body)['data']
-            .map((p) => Retrait.fromJson(p))
-            .toList();
-        apiResponse.data as List<dynamic>;
+        apiResponse.data = Retrait.fromJson(jsonDecode(response.body)['data']);
         break;
       case 403:
         apiResponse.erreur = jsonDecode(response.body)['message'];

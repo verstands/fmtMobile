@@ -55,10 +55,7 @@ Future<ApiResponse> getPays() async {
     });
     switch (response.statusCode) {
       case 200:
-        apiResponse.data = jsonDecode(response.body)['data']
-            .map((p) => Pays.fromJson(p))
-            .toList();
-        apiResponse.data as List<dynamic>;
+        apiResponse.data = Pays.fromJson(jsonDecode(response.body)['data']);
         break;
       case 422:
         final errors = jsonDecode(response.body)['message'];

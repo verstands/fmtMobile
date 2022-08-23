@@ -10,6 +10,7 @@ import 'package:fmt/constant.dart';
 import 'package:fmt/models/api_response.dart';
 import 'package:fmt/models/code.model.dart';
 import 'package:fmt/models/hystorique.model.dart';
+import 'package:fmt/models/retrait.model.dart';
 import 'package:fmt/screens/login.dart';
 import 'package:fmt/screens/profil.dart';
 import 'package:fmt/services/depot.service.dart';
@@ -33,6 +34,25 @@ class _AccueilState extends State<Accueil> {
   List<String> itmes = ['item1', 'items2'];
   String? selectItem = 'item1';
   //historique
+
+  //variable retrait
+  int? id;
+  String? code;
+  String? montantEnvoi;
+  int? idDevise;
+  String? expediteur;
+  String? beneficiaire;
+  String? phoneExp;
+  int? idPays;
+  String? createdAt;
+  String? updatedAt;
+  String? dates;
+  int? status;
+  int? idAg;
+  String? idUser;
+  Retrait? RT;
+  String aa = "sed";
+  //refresh
   Future<void> _refresh() {
     return Future.delayed(
       Duration(seconds: 0),
@@ -47,9 +67,8 @@ class _AccueilState extends State<Accueil> {
         _loadingHy = _loadingHy ? !_loadingHy : _loadingHy;
       });
     } else if (response.erreur == unauthorized) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Unauthenticated'),
-      ));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
       setState(() {
         loading = false;
       });
@@ -71,9 +90,8 @@ class _AccueilState extends State<Accueil> {
         print(response.data as List<dynamic>);
       });
     } else if (response.erreur == unauthorized) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Unauthenticated'),
-      ));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
       setState(() {
         loading = false;
       });
@@ -99,14 +117,20 @@ class _AccueilState extends State<Accueil> {
     ApiResponse response = await codeAgence(txtverifi.text);
     if (response.erreur == null) {
       setState(() {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('ok'),
-        ));
+        RT = response.data as Retrait;
+        code = RT!.code ?? "";
+        montantEnvoi = RT!.montantEnvoi ?? "";
+        idDevise = (RT!.idDevise ?? "") as int?;
+        expediteur = RT!.expediteur ?? "";
+        beneficiaire = RT!.beneficiaire ?? "";
+        phoneExp = RT!.phoneExp ?? "";
+        idPays = (RT!.idPays ?? "") as int?;
+        dates = RT!.dates ?? "";
+        idAg = (RT!.idAg ?? "") as int?;
       });
     } else if (response.erreur == unauthorized) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Unauthenticatedaaaaaaaaaaaa'),
-      ));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
       setState(() {
         loading = false;
       });
@@ -141,16 +165,14 @@ class _AccueilState extends State<Accueil> {
         txtBenefice.text,
         txtTel.text,
         txtPays.text);
-
     if (response.erreur == null) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Argent envoyé avec success'),
       ));
     } else if (response.erreur == unauthorized) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Unauthenticated'),
-      ));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('${response.erreur}'),
@@ -187,7 +209,6 @@ class _AccueilState extends State<Accueil> {
     setState(() {
       _hystorique();
       _retrieveCode();
-      _payss();
       _selectedIndex = index;
     });
   }
@@ -302,7 +323,9 @@ class _AccueilState extends State<Accueil> {
               ),
               loading
                   ? Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
                     )
                   : Container(
                       padding: EdgeInsets.all(15),
@@ -319,32 +342,33 @@ class _AccueilState extends State<Accueil> {
                                     EdgeInsets.symmetric(vertical: 10))),
                         onPressed: () {
                           if (formkey1.currentState!.validate()) {
-                            /*showDialog(
+                            showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: Text("FMT"),
                                 content: Text(
-                                    'Voulez-vous faire un retrait \n code : $txtverifi'),
+                                    'Voulez-vous faire un retrait \n code : $aa'),
                                 actions: [
                                   TextButton(
                                       onPressed: () {
-                                        Navigator.of(context).pop();
+                                        setState(() {
+                                          Navigator.of(context).pop();
+                                          loading = false;
+                                        });
                                       },
                                       child: Text("Non")),
                                   TextButton(
                                       onPressed: () {
                                         setState(() {
-                                          loading = true;
-                                          _useCOde();
+                                          loading = false;
                                         });
                                       },
                                       child: Text("Oui"))
                                 ],
                               ),
-                            );*/
+                            );
                             setState(() {
                               loading = true;
-                              _agenceCode();
                             });
                           }
                         },
@@ -465,28 +489,6 @@ class _AccueilState extends State<Accueil> {
                       border: OutlineInputBorder(
                           borderSide:
                               BorderSide(width: 1, color: Colors.black))),
-                ),
-                DropdownButton<String>(
-                  value: dropdownValue,
-                  icon: const Icon(Icons.arrow_downward),
-                  elevation: 16,
-                  style: const TextStyle(color: Colors.deepPurple),
-                  underline: Container(
-                    height: 2,
-                    color: Colors.deepPurpleAccent,
-                  ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      dropdownValue = newValue!;
-                    });
-                  },
-                  items: <String>['One', 'Two', 'Free', 'Four']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
                 ),
                 Container(
                   padding: EdgeInsets.all(15),

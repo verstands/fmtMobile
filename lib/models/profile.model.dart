@@ -1,4 +1,4 @@
-class Profile {
+class Profil {
   int? id;
   String? matricule;
   String? nom;
@@ -10,7 +10,7 @@ class Profile {
   String? createdAt;
   String? updatedAt;
 
-  Profile(
+  Profil(
       {this.id,
       this.matricule,
       this.nom,
@@ -22,7 +22,7 @@ class Profile {
       this.createdAt,
       this.updatedAt});
 
-  Profile.fromJson(Map<String, dynamic> json) {
+  Profil.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     matricule = json['matricule'];
     nom = json['nom'];

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fmt/constant.dart';
 import 'package:fmt/models/api_response.dart';
+import 'package:fmt/models/profile.model.dart';
 import 'package:fmt/screens/profil.dart';
 import 'package:fmt/services/login.service.dart';
 import 'package:http/http.dart' as http;
@@ -15,17 +16,9 @@ Future<ApiResponse> getprofile() async {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token'
     });
-    print(jsonDecode(response.body)['data']);
     switch (response.statusCode) {
       case 200:
-        apiResponse.data = jsonDecode(response.body)['data']
-            .map((p) => Profile.fromJson(p))
-            .toList();
-        apiResponse.data as List<dynamic>;
-        break;
-      case 422:
-        final errors = jsonDecode(response.body)['message'];
-        apiResponse.erreur = errors[errors.keys.elementAt(0)][0];
+        apiResponse.data = Profil.fromJson(jsonDecode(response.body)['data']);
         break;
       case 401:
         apiResponse.erreur = unauthorized;
