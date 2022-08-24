@@ -28,7 +28,8 @@ class _AccueilState extends State<Accueil> {
   bool loading = false;
   bool _loadingHy = true;
   List<dynamic> _hysto = [];
-  List<dynamic> _pays = [];
+  List<dynamic> _paysG = [];
+  String? _mystate;
   List<dynamic> _agentcode = [];
   String dropdownValue = 'One';
   List<String> itmes = ['item1', 'items2'];
@@ -51,6 +52,14 @@ class _AccueilState extends State<Accueil> {
   int? idAg;
   String? idUser;
   Retrait? RT;
+
+  //variable depot
+  String? txtMontanttext,
+      txtDevisetext,
+      txtExptext,
+      txtBeneficetext,
+      txtTeltext,
+      txtPaystext;
   //refresh
   Future<void> _refresh() {
     return Future.delayed(
@@ -86,7 +95,8 @@ class _AccueilState extends State<Accueil> {
     ApiResponse response = await getPays();
     if (response.erreur == null) {
       setState(() {
-        print(response.data as List<dynamic>);
+        _paysG = response.data as List<dynamic>;
+        print(_paysG.toList());
       });
     } else if (response.erreur == unauthorized) {
       Navigator.of(context).pushAndRemoveUntil(
@@ -155,7 +165,7 @@ class _AccueilState extends State<Accueil> {
           builder: (context) => AlertDialog(
             title: Text("FMT"),
             content: Text(
-                'Voulez-vous faire un retrait? \n\n code : $code \n Nom expediteur : $expediteur \n Nom beneficiare : $beneficiaire \n Telephone : $phoneExp \n Montant : $montantEnvoi \n Devise : $idDevise \n Pays : $idPays \n Agence : $idAg \n Date : $dates '),
+                'Voulez-vous faire un retrait? \n\n code : $code \n Nom expediteur : $expediteur \n Nom beneficiare : $beneficiaire \n Telephone : $phoneExp \n Montant : $montantEnvoi \n Devise : $idDevise \n Pays : $idPays \n Date : $dates '),
             actions: [
               TextButton(
                   onPressed: () {
@@ -202,9 +212,24 @@ class _AccueilState extends State<Accueil> {
   TextEditingController txtPays = TextEditingController();
   TextEditingController txtMontant = TextEditingController();
   TextEditingController txtDevise = TextEditingController();
+  TextEditingController txtPour = TextEditingController();
   //fin de depot
-  //depot
 
+  //pourcentage
+
+  Future<void> _pour() async {
+    ApiResponse response = await getPourcentage(txtMontant.text);
+    if (response.erreur == null) {
+      setState(() {
+        txtPour.text = response.data.toString();
+      });
+    } else if (response.erreur == unauthorized) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    } else {}
+  }
+
+  //depot
   void _createDepot() async {
     ApiResponse response = await depotUser(
         txtNumEnvoie.text,
@@ -220,6 +245,8 @@ class _AccueilState extends State<Accueil> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Argent envoyé avec success'),
       ));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Accueil()));
     } else if (response.erreur == unauthorized) {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => Login()), (route) => false);
@@ -255,10 +282,17 @@ class _AccueilState extends State<Accueil> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
+  @override
+  void initState() {
+    _pour();
+    super.initState();
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _hystorique();
       _retrieveCode();
+      _pour();
       _selectedIndex = index;
     });
   }
@@ -492,6 +526,20 @@ class _AccueilState extends State<Accueil> {
                   height: 10,
                 ),
                 TextFormField(
+                  controller: txtPour,
+                  keyboardType: TextInputType.number,
+                  validator: (val) => val!.isEmpty ? 'Pourcentage' : null,
+                  decoration: InputDecoration(
+                      labelText: 'Pourcentage',
+                      contentPadding: EdgeInsets.all(10),
+                      border: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(width: 1, color: Colors.black))),
+                ),
+                const Divider(
+                  height: 10,
+                ),
+                TextFormField(
                   controller: txtDevise,
                   keyboardType: TextInputType.text,
                   validator: (val) => val!.isEmpty ? 'Devise' : null,
@@ -516,27 +564,22 @@ class _AccueilState extends State<Accueil> {
                           borderSide:
                               BorderSide(width: 1, color: Colors.black))),
                 ),
-                DropdownButton<String>(
-                  value: dropdownValue,
-                  icon: const Icon(Icons.arrow_downward),
-                  elevation: 16,
-                  style: const TextStyle(color: Colors.deepPurple),
-                  underline: Container(
-                    height: 2,
-                    color: Colors.deepPurpleAccent,
-                  ),
-                  onChanged: (String? newValue) {
+                DropdownButton(
+                  items: _paysG.map((select) {
+                    return new DropdownMenuItem(
+                        value: select['id'].toString(),
+                        child: new Text(select['nom'].toString()));
+                  }).toList(),
+                  onChanged: (newVal) {
                     setState(() {
-                      dropdownValue = newValue!;
+                      dropdownValue = newVal.toString();
                     });
                   },
-                  items: <String>['One', 'Two', 'Free', 'Four']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                  value: dropdownValue,
+                  hint: Text("veuillez choisir agence"),
+                  dropdownColor: Colors.blueGrey,
+                  icon: Icon(Icons.arrow_drop_down),
+                  iconSize: 36,
                 ),
                 Container(
                   padding: EdgeInsets.all(15),
@@ -560,7 +603,8 @@ class _AccueilState extends State<Accueil> {
                           context: context,
                           builder: (context) => AlertDialog(
                             title: Text("FMT"),
-                            content: Text("Voulez-vous faire une transaction?"),
+                            content:
+                                Text("Voulez-vous faire une transaction? "),
                             actions: [
                               TextButton(
                                   onPressed: () {
@@ -570,9 +614,8 @@ class _AccueilState extends State<Accueil> {
                               TextButton(
                                   onPressed: () {
                                     setState(() {
-                                      loading = !loading;
+                                      _createDepot();
                                     });
-                                    _createDepot();
                                   },
                                   child: Text("Oui"))
                             ],
@@ -601,7 +644,6 @@ class _AccueilState extends State<Accueil> {
                     scrollDirection: Axis.horizontal,
                     child: DataTable(columns: [
                       DataColumn(label: Text('Pays')),
-                      DataColumn(label: Text('Agence')),
                       DataColumn(label: Text('Nom exp')),
                       DataColumn(label: Text('Nom benef')),
                       DataColumn(label: Text('Tel')),
@@ -610,7 +652,6 @@ class _AccueilState extends State<Accueil> {
                     ], rows: [
                       DataRow(selected: true, cells: [
                         DataCell(Text("${hystoriques.nom}")),
-                        DataCell(Text('${hystoriques.nomAgence}')),
                         DataCell(Text('${hystoriques.expediteur}')),
                         DataCell(Text('${hystoriques.beneficiaire}')),
                         DataCell(Text('${hystoriques.phoneExp}')),

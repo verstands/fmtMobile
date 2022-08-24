@@ -41,7 +41,7 @@ Future<ApiResponse> depotUser(
         apiResponse.data = jsonDecode(response.body);
         break;
       case 422:
-        final errors = jsonDecode(response.body)['message'];
+        final errors = jsonDecode(response.body)['errors'];
         apiResponse.erreur = errors[errors.keys.elementAt(0)][0];
         break;
       case 401:
@@ -108,6 +108,38 @@ Future<ApiResponse> getCode() async {
         break;
       case 422:
         final errors = jsonDecode(response.body)['code'];
+        apiResponse.erreur = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 401:
+        apiResponse.erreur = unauthorized;
+        break;
+      default:
+        apiResponse.erreur = somethingwentwrong;
+        break;
+    }
+  } catch (e) {
+    apiResponse.erreur = serverError;
+  }
+  return apiResponse;
+}
+
+//pourcentage
+Future<ApiResponse> getPourcentage(String montant) async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    String token = await getToken();
+    final response = await http.get(Uri.parse('$PourcentageURL/$montant'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        });
+    switch (response.statusCode) {
+      case 200:
+        apiResponse.data = jsonDecode(response.body)['message'];
+        print(jsonDecode(response.body)['message']);
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['message'];
         apiResponse.erreur = errors[errors.keys.elementAt(0)][0];
         break;
       case 401:
