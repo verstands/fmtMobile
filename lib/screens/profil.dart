@@ -68,6 +68,7 @@ class _ProfileState extends State<Profile> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF000000),
         title: Text('Profile'),
+        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.exit_to_app))],
       ),
       body: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
@@ -101,6 +102,7 @@ class _ProfileState extends State<Profile> {
                                     decoration: InputDecoration(
                                         labelText: 'Nom',
                                         contentPadding: EdgeInsets.all(10),
+                                        enabled: false,
                                         border: OutlineInputBorder(
                                             borderSide: BorderSide(
                                                 width: 1,
@@ -114,6 +116,7 @@ class _ProfileState extends State<Profile> {
                                     controller: txtprenom,
                                     validator: (val) =>
                                         val!.isEmpty ? 'prenom vide' : null,
+                                    enabled: false,
                                     decoration: InputDecoration(
                                         labelText: 'Prenom',
                                         contentPadding: EdgeInsets.all(10),
@@ -130,6 +133,7 @@ class _ProfileState extends State<Profile> {
                                     controller: txtemail,
                                     validator: (val) =>
                                         val!.isEmpty ? 'email vide' : null,
+                                    enabled: false,
                                     decoration: InputDecoration(
                                         labelText: 'Email',
                                         contentPadding: EdgeInsets.all(10),
@@ -138,44 +142,6 @@ class _ProfileState extends State<Profile> {
                                                 width: 1,
                                                 color: Colors.black))),
                                   ),
-                                  loading
-                                      ? Center(
-                                          child: CircularProgressIndicator(
-                                            color: Colors.black,
-                                          ),
-                                        )
-                                      : Container(
-                                          padding: EdgeInsets.all(15),
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(2)),
-                                          ),
-                                          height: 85,
-                                          child: TextButton(
-                                            style: ButtonStyle(
-                                                backgroundColor:
-                                                    MaterialStateColor
-                                                        .resolveWith((states) =>
-                                                            Colors.black),
-                                                padding: MaterialStateProperty
-                                                    .resolveWith((states) =>
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 10))),
-                                            onPressed: () {
-                                              if (formkey2.currentState!
-                                                  .validate()) {
-                                                setState(() {
-                                                  loading = true;
-                                                });
-                                              }
-                                            },
-                                            child: const Text(
-                                              'Update',
-                                              style: TextStyle(
-                                                  color: Colors.orange),
-                                            ),
-                                          ),
-                                        ),
                                 ],
                               ),
                             )),

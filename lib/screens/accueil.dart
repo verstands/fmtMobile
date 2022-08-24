@@ -26,7 +26,7 @@ class Accueil extends StatefulWidget {
 
 class _AccueilState extends State<Accueil> {
   bool loading = false;
-  bool _loadingHy = false;
+  bool _loadingHy = true;
   List<dynamic> _hysto = [];
   List<dynamic> _pays = [];
   List<dynamic> _agentcode = [];
@@ -63,7 +63,7 @@ class _AccueilState extends State<Accueil> {
     if (response.erreur == null) {
       setState(() {
         _hysto = response.data as List<dynamic>;
-        _loadingHy = _loadingHy ? !_loadingHy : _loadingHy;
+        _loadingHy = false;
       });
     } else if (response.erreur == unauthorized) {
       Navigator.of(context).pushAndRemoveUntil(
@@ -418,7 +418,7 @@ class _AccueilState extends State<Accueil> {
                 const Divider(height: 10),
                 TextFormField(
                   keyboardType: TextInputType.text,
-                  validator: (val) => val!.isEmpty ? 'Nom d\'envoi' : null,
+                  validator: (val) => val!.isEmpty ? 'code d\'envoi' : null,
                   controller: txtNumEnvoie,
                   enabled: false,
                   obscureText: true,
@@ -589,31 +589,37 @@ class _AccueilState extends State<Accueil> {
         itemBuilder: (BuildContext context, int index) {
           Hystorique hystoriques = _hysto[index];
 
-          return RefreshIndicator(
-            onRefresh: _refresh,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(columns: [
-                DataColumn(label: Text('Pays')),
-                DataColumn(label: Text('Agence')),
-                DataColumn(label: Text('Nom exp')),
-                DataColumn(label: Text('Nom benef')),
-                DataColumn(label: Text('Tel')),
-                DataColumn(label: Text('Montant')),
-                DataColumn(label: Text('Devise')),
-              ], rows: [
-                DataRow(selected: true, cells: [
-                  DataCell(Text("${hystoriques.nom}")),
-                  DataCell(Text('${hystoriques.nomAgence}')),
-                  DataCell(Text('${hystoriques.expediteur}')),
-                  DataCell(Text('${hystoriques.beneficiaire}')),
-                  DataCell(Text('${hystoriques.phoneExp}')),
-                  DataCell(Text('${hystoriques.montantEnvoi}')),
-                  DataCell(Text('${hystoriques.intitule}')),
-                ]),
-              ]),
-            ),
-          );
+          return _loadingHy
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
+                  ),
+                )
+              : RefreshIndicator(
+                  onRefresh: _refresh,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(columns: [
+                      DataColumn(label: Text('Pays')),
+                      DataColumn(label: Text('Agence')),
+                      DataColumn(label: Text('Nom exp')),
+                      DataColumn(label: Text('Nom benef')),
+                      DataColumn(label: Text('Tel')),
+                      DataColumn(label: Text('Montant')),
+                      DataColumn(label: Text('Devise')),
+                    ], rows: [
+                      DataRow(selected: true, cells: [
+                        DataCell(Text("${hystoriques.nom}")),
+                        DataCell(Text('${hystoriques.nomAgence}')),
+                        DataCell(Text('${hystoriques.expediteur}')),
+                        DataCell(Text('${hystoriques.beneficiaire}')),
+                        DataCell(Text('${hystoriques.phoneExp}')),
+                        DataCell(Text('${hystoriques.montantEnvoi}')),
+                        DataCell(Text('${hystoriques.intitule}')),
+                      ]),
+                    ]),
+                  ),
+                );
         },
         itemCount: _hysto.length,
       )
