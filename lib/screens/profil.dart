@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:fmt/constant.dart';
 import 'package:fmt/models/api_response.dart';
 import 'package:fmt/models/profile.model.dart';
+import 'package:fmt/services/login.service.dart';
 import 'package:fmt/services/profile.service.dart';
 
 import 'login.dart';
@@ -25,6 +26,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   bool loading = true;
+  String? destory;
   Profil? pro;
   final GlobalKey<FormState> formkey2 = GlobalKey<FormState>();
   TextEditingController txtnom = TextEditingController();
@@ -68,7 +70,18 @@ class _ProfileState extends State<Profile> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF000000),
         title: Text('Profile'),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.exit_to_app))],
+        actions: [
+          IconButton(
+              onPressed: () {
+                logout().then((value) => {
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => const Login()),
+                          (route) => false)
+                    });
+              },
+              icon: Icon(Icons.exit_to_app))
+        ],
       ),
       body: ListView.builder(
           itemBuilder: (BuildContext context, int index) {

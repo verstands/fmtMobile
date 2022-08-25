@@ -17,7 +17,8 @@ Future<ApiResponse> depotUser(
     String expediteur,
     String beneficiaire,
     String phone_exp,
-    String id_pays) async {
+    String id_pays,
+    String id_ag) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     //String token = await getToken();
@@ -33,7 +34,8 @@ Future<ApiResponse> depotUser(
         'expediteur': expediteur,
         'beneficiaire': beneficiaire,
         'phone_exp': phone_exp,
-        'id_pays': id_pays
+        'id_pays': id_pays,
+        'id_ag': id_ag
       },
     );
     switch (response.statusCode) {

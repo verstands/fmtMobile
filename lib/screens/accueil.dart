@@ -26,6 +26,7 @@ class Accueil extends StatefulWidget {
 
 class _AccueilState extends State<Accueil> {
   bool loading = false;
+  bool loading_depot = true;
   bool _loadingHy = true;
   List<dynamic> _hysto = [];
   List<dynamic> _paysG = [];
@@ -165,7 +166,7 @@ class _AccueilState extends State<Accueil> {
           builder: (context) => AlertDialog(
             title: Text("FMT"),
             content: Text(
-                'Voulez-vous faire un retrait? \n\n code : $code \n Nom expediteur : $expediteur \n Nom beneficiare : $beneficiaire \n Telephone : $phoneExp \n Montant : $montantEnvoi \n Devise : $idDevise \n Pays : $idPays \n Date : $dates '),
+                'Voulez-vous faire un retrait? \n\n Code : $code \n Nom expediteur : $expediteur \n Nom beneficiare : $beneficiaire \n Telephone : $phoneExp \n Montant : $montantEnvoi \n Devise : $idDevise \n Pays : $idPays \n Date : $dates '),
             actions: [
               TextButton(
                   onPressed: () {
@@ -217,8 +218,8 @@ class _AccueilState extends State<Accueil> {
 
   //pourcentage
 
-  Future<void> _pour() async {
-    ApiResponse response = await getPourcentage(txtMontant.text);
+  void _pour(var montant) async {
+    ApiResponse response = await getPourcentage(montant);
     if (response.erreur == null) {
       setState(() {
         txtPour.text = response.data.toString();
@@ -238,7 +239,8 @@ class _AccueilState extends State<Accueil> {
         txtExp.text,
         txtBenefice.text,
         txtTel.text,
-        txtPays.text);
+        txtPays.text,
+        txtPour.text);
 
     if (response.erreur == null) {
       Navigator.of(context).pop();
@@ -284,7 +286,7 @@ class _AccueilState extends State<Accueil> {
 
   @override
   void initState() {
-    _pour();
+    //_pour();
     super.initState();
   }
 
@@ -292,7 +294,7 @@ class _AccueilState extends State<Accueil> {
     setState(() {
       _hystorique();
       _retrieveCode();
-      _pour();
+      //_pour();
       _selectedIndex = index;
     });
   }
@@ -521,6 +523,9 @@ class _AccueilState extends State<Accueil> {
                       border: OutlineInputBorder(
                           borderSide:
                               BorderSide(width: 1, color: Colors.black))),
+                  onChanged: (String? newval) {
+                    _pour(newval);
+                  },
                 ),
                 const Divider(
                   height: 10,
@@ -528,6 +533,7 @@ class _AccueilState extends State<Accueil> {
                 TextFormField(
                   controller: txtPour,
                   keyboardType: TextInputType.number,
+                  enabled: false,
                   validator: (val) => val!.isEmpty ? 'Pourcentage' : null,
                   decoration: InputDecoration(
                       labelText: 'Pourcentage',
@@ -606,18 +612,37 @@ class _AccueilState extends State<Accueil> {
                             content:
                                 Text("Voulez-vous faire une transaction? "),
                             actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text("Non")),
-                              TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _createDepot();
-                                    });
-                                  },
-                                  child: Text("Oui"))
+                              loading_depot
+                                  ? Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.black,
+                                      ),
+                                    )
+                                  : Text(''),
+                              Divider(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text(
+                                        "Non",
+                                        style: TextStyle(color: Colors.red),
+                                      )),
+                                  TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          loading_depot = false;
+                                          _createDepot();
+                                        });
+                                      },
+                                      child: Text("Oui")),
+                                ],
+                              ),
                             ],
                           ),
                         );
