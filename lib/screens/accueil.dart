@@ -32,9 +32,11 @@ class _AccueilState extends State<Accueil> {
   bool _loadingHy = true;
   List<dynamic> _hysto = [];
   List _paysG = [];
+  List _deviseD = [];
   String? _mystate;
   List<dynamic> _agentcode = [];
-  String dropdownValue = 'One';
+  String? dropdownValue;
+  String? dropdownValue1;
   List<String> itmes = ['item1', 'items2'];
   String? selectItem = 'item1';
   //historique
@@ -143,7 +145,7 @@ class _AccueilState extends State<Accueil> {
     ApiResponse response = await getPays();
     if (response.erreur == null) {
       setState(() {
-        _paysG = response.data as List<dynamic>;
+        _paysG = response.data as List;
         print(_paysG);
       });
     } else if (response.erreur == unauthorized) {
@@ -154,7 +156,29 @@ class _AccueilState extends State<Accueil> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${response.erreur}'),
+        content: Text('ss'),
+      ));
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  void _devise() async {
+    ApiResponse response = await getDevise();
+    if (response.erreur == null) {
+      setState(() {
+        _deviseD = response.data as List;
+      });
+    } else if (response.erreur == unauthorized) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+      setState(() {
+        loading = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('ss'),
       ));
       setState(() {
         loading = false;
@@ -282,11 +306,11 @@ class _AccueilState extends State<Accueil> {
     ApiResponse response = await depotUser(
         txtNumEnvoie.text,
         txtMontant.text,
-        txtDevise.text,
+        dropdownValue1.toString(),
         txtExp.text,
         txtBenefice.text,
         txtTel.text,
-        txtPays.text,
+        dropdownValue.toString(),
         txtPour.text);
 
     if (response.erreur == null) {
@@ -334,6 +358,8 @@ class _AccueilState extends State<Accueil> {
   @override
   void initState() {
     super.initState();
+    _payss();
+    _devise();
   }
 
   void _onItemTapped(int index) {
@@ -590,48 +616,57 @@ class _AccueilState extends State<Accueil> {
                 const Divider(
                   height: 10,
                 ),
-                TextFormField(
-                  controller: txtDevise,
-                  keyboardType: TextInputType.text,
-                  validator: (val) => val!.isEmpty ? 'Devise vide' : null,
-                  decoration: InputDecoration(
-                      labelText: 'Devise',
-                      contentPadding: EdgeInsets.all(10),
-                      border: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 1, color: Colors.black))),
-                ),
+                Expanded(
+                    child: Container(
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey, width: 1),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: DropdownButton(
+                    items: _deviseD.map((select) {
+                      return new DropdownMenuItem(
+                          value: select['id'].toString(),
+                          child: new Text(select['intitule'].toString()));
+                    }).toList(),
+                    onChanged: (String? newVal) {
+                      setState(() {
+                        dropdownValue1 = newVal.toString();
+                      });
+                    },
+                    value: dropdownValue1,
+                    hint: Text("Selectionnez une devise"),
+                    dropdownColor: Colors.blueGrey,
+                    icon: Icon(Icons.arrow_drop_down),
+                    iconSize: 36,
+                  ),
+                )),
                 const Divider(
                   height: 10,
                 ),
-                TextFormField(
-                  controller: txtPays,
-                  keyboardType: TextInputType.text,
-                  validator: (val) => val!.isEmpty ? 'Pays vide' : null,
-                  decoration: InputDecoration(
-                      labelText: 'Pays',
-                      contentPadding: EdgeInsets.all(10),
-                      border: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 1, color: Colors.black))),
-                ),
-                DropdownButton(
-                  items: _paysG.map((select) {
-                    return new DropdownMenuItem(
-                        value: select['id'].toString(),
-                        child: new Text(select['nom'].toString()));
-                  }).toList(),
-                  onChanged: (newVal) {
-                    setState(() {
-                      dropdownValue = newVal.toString();
-                    });
-                  },
-                  value: dropdownValue,
-                  hint: Text("veuillez choisir agence"),
-                  dropdownColor: Colors.blueGrey,
-                  icon: Icon(Icons.arrow_drop_down),
-                  iconSize: 36,
-                ),
+                Expanded(
+                    child: Container(
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey, width: 1),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: DropdownButton(
+                    items: _paysG.map((select) {
+                      return new DropdownMenuItem(
+                          value: select['id'].toString(),
+                          child: new Text(select['nom'].toString()));
+                    }).toList(),
+                    onChanged: (String? newVal) {
+                      setState(() {
+                        dropdownValue = newVal.toString();
+                      });
+                    },
+                    value: dropdownValue,
+                    hint: Text("Selectionnez une devise"),
+                    dropdownColor: Colors.blueGrey,
+                    icon: Icon(Icons.arrow_drop_down),
+                    iconSize: 36,
+                  ),
+                )),
                 Container(
                   padding: EdgeInsets.all(15),
                   decoration: const BoxDecoration(

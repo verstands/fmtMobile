@@ -55,10 +55,38 @@ Future<ApiResponse> getPays() async {
     });
     switch (response.statusCode) {
       case 200:
-        apiResponse.data = jsonDecode(response.body)['data']
-            .map((p) => Pays.fromJson(p))
-            .toList();
-        apiResponse.data as List<dynamic>;
+        apiResponse.data = jsonDecode(response.body)['data'];
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['message'];
+        apiResponse.erreur = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 401:
+        apiResponse.erreur = unauthorized;
+        break;
+      default:
+        apiResponse.erreur = somethingwentwrong;
+        break;
+    }
+  } catch (e) {
+    apiResponse.erreur = serverError;
+  }
+  return apiResponse;
+}
+
+Future<ApiResponse> getDevise() async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    //String token = await getToken();
+    String token = await getToken();
+
+    final response = await http.get(Uri.parse(deviseURL), headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
+    switch (response.statusCode) {
+      case 200:
+        apiResponse.data = jsonDecode(response.body)['data'];
         break;
       case 422:
         final errors = jsonDecode(response.body)['message'];
