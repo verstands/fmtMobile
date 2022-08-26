@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fmt/constant.dart';
+import 'package:fmt/models/CountR.model.dart';
 import 'package:fmt/models/api_response.dart';
 import 'package:fmt/models/code.model.dart';
 import 'package:fmt/models/hystorique.model.dart';
@@ -15,6 +16,7 @@ import 'package:fmt/screens/login.dart';
 import 'package:fmt/screens/profil.dart';
 import 'package:fmt/services/depot.service.dart';
 import 'package:fmt/services/hystorique.service.dart';
+import 'package:fmt/services/profile.service.dart';
 import 'package:fmt/services/retrait.service.dart';
 
 class Accueil extends StatefulWidget {
@@ -29,7 +31,7 @@ class _AccueilState extends State<Accueil> {
   bool loading_depot = true;
   bool _loadingHy = true;
   List<dynamic> _hysto = [];
-  List<dynamic> _paysG = [];
+  List _paysG = [];
   String? _mystate;
   List<dynamic> _agentcode = [];
   String dropdownValue = 'One';
@@ -41,11 +43,11 @@ class _AccueilState extends State<Accueil> {
   int? id;
   String? code;
   String? montantEnvoi;
-  int? idDevise;
+  String? idDevise;
   String? expediteur;
   String? beneficiaire;
   String? phoneExp;
-  int? idPays;
+  String? idPays;
   String? createdAt;
   String? updatedAt;
   String? dates;
@@ -61,6 +63,10 @@ class _AccueilState extends State<Accueil> {
       txtBeneficetext,
       txtTeltext,
       txtPaystext;
+
+  //count
+  int? countDe;
+  int? countRe;
   //refresh
   Future<void> _refresh() {
     return Future.delayed(
@@ -68,6 +74,47 @@ class _AccueilState extends State<Accueil> {
     );
   }
 
+  void _countD() async {
+    final response = await getcountD();
+    if (response.erreur == null) {
+      setState(() {});
+    } else if (response.erreur == unauthorized) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+      setState(() {
+        loading = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.erreur}'),
+      ));
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  void _countR() async {
+    final response = await getcountR();
+    if (response.erreur == null) {
+      setState(() {});
+    } else if (response.erreur == unauthorized) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+      setState(() {
+        loading = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.erreur}'),
+      ));
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  //hystorique
   void _hystorique() async {
     ApiResponse response = await gethistorique();
     if (response.erreur == null) {
@@ -97,7 +144,7 @@ class _AccueilState extends State<Accueil> {
     if (response.erreur == null) {
       setState(() {
         _paysG = response.data as List<dynamic>;
-        print(_paysG.toList());
+        print(_paysG);
       });
     } else if (response.erreur == unauthorized) {
       Navigator.of(context).pushAndRemoveUntil(
@@ -152,11 +199,11 @@ class _AccueilState extends State<Accueil> {
         RT = response.data as Retrait;
         code = RT!.code ?? "";
         montantEnvoi = RT!.montantEnvoi ?? "";
-        idDevise = (RT!.idDevise ?? "") as int?;
+        idDevise = RT!.intitule ?? "";
         expediteur = RT!.expediteur ?? "";
         beneficiaire = RT!.beneficiaire ?? "";
         phoneExp = RT!.phoneExp ?? "";
-        idPays = (RT!.idPays ?? "") as int?;
+        idPays = RT!.nom ?? "";
         dates = RT!.dates ?? "";
         idAg = (RT!.idAg ?? "") as int?;
         loading = false;
@@ -286,7 +333,6 @@ class _AccueilState extends State<Accueil> {
 
   @override
   void initState() {
-    //_pour();
     super.initState();
   }
 
@@ -294,7 +340,6 @@ class _AccueilState extends State<Accueil> {
     setState(() {
       _hystorique();
       _retrieveCode();
-      //_pour();
       _selectedIndex = index;
     });
   }
@@ -325,7 +370,7 @@ class _AccueilState extends State<Accueil> {
                       style: TextStyle(color: Colors.white, fontSize: 30),
                     ),
                     Text(
-                      "30",
+                      "2",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     )
                   ],
@@ -361,11 +406,11 @@ class _AccueilState extends State<Accueil> {
                       color: Colors.white,
                     ),
                     Text(
-                      "Retrait",
+                      "Depot",
                       style: TextStyle(color: Colors.white, fontSize: 30),
                     ),
                     Text(
-                      "30",
+                      "2",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     )
                   ],
@@ -548,7 +593,7 @@ class _AccueilState extends State<Accueil> {
                 TextFormField(
                   controller: txtDevise,
                   keyboardType: TextInputType.text,
-                  validator: (val) => val!.isEmpty ? 'Devise' : null,
+                  validator: (val) => val!.isEmpty ? 'Devise vide' : null,
                   decoration: InputDecoration(
                       labelText: 'Devise',
                       contentPadding: EdgeInsets.all(10),
@@ -656,7 +701,6 @@ class _AccueilState extends State<Accueil> {
       ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           Hystorique hystoriques = _hysto[index];
-
           return _loadingHy
               ? Center(
                   child: CircularProgressIndicator(

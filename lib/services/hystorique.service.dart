@@ -56,10 +56,9 @@ Future<ApiResponse> getPays() async {
     switch (response.statusCode) {
       case 200:
         apiResponse.data = jsonDecode(response.body)['data']
-            .map((p) => Hystorique.fromJson(p))
+            .map((p) => Pays.fromJson(p))
             .toList();
         apiResponse.data as List<dynamic>;
-        print(jsonDecode(response.body)['data']);
         break;
       case 422:
         final errors = jsonDecode(response.body)['message'];

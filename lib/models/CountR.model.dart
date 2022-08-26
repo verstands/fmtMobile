@@ -1,9 +1,9 @@
-class Code {
+class CodeR {
   int? message;
 
-  Code({this.message});
+  CodeR({this.message});
 
-  Code.fromJson(Map<String, dynamic> json) {
+  CodeR.fromJson(Map<String, dynamic> json) {
     message = json['message'];
   }
 

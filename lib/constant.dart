@@ -1,7 +1,7 @@
 //-----------------requete reussi-------------------
 import 'package:flutter/material.dart';
 
-const baseURL = 'http://192.168.1.103:82/api';
+const baseURL = 'http://192.168.1.130:82/api';
 const loginURL = baseURL + '/loginAgent';
 const depotURL = baseURL + '/depot';
 const userURL = baseURL + '/retrait';
@@ -13,6 +13,8 @@ const HystoriqueURL = baseURL + '/historiqueAgence';
 const profileURL = baseURL + '/profile';
 const UtiliserCodeURL = baseURL + '/codeUse';
 const PourcentageURL = baseURL + '/pourcentageT';
+const countD = baseURL + '/countDepot';
+const countR = baseURL + '/countRetrait';
 
 //---------------erreur------------------------------
 const serverError = "Erreur de la connexion";

@@ -2,11 +2,11 @@ class Retrait {
   int? id;
   String? code;
   String? montantEnvoi;
-  int? idDevise;
+  String? intitule;
   String? expediteur;
   String? beneficiaire;
   String? phoneExp;
-  int? idPays;
+  String? nom;
   String? createdAt;
   String? updatedAt;
   String? dates;
@@ -18,11 +18,11 @@ class Retrait {
       {this.id,
       this.code,
       this.montantEnvoi,
-      this.idDevise,
+      this.intitule,
       this.expediteur,
       this.beneficiaire,
       this.phoneExp,
-      this.idPays,
+      this.nom,
       this.createdAt,
       this.updatedAt,
       this.dates,
@@ -34,11 +34,11 @@ class Retrait {
     id = json['id'];
     code = json['code'];
     montantEnvoi = json['montant_envoi'];
-    idDevise = json['id_devise'];
+    intitule = json['intitule'];
     expediteur = json['expediteur'];
     beneficiaire = json['beneficiaire'];
     phoneExp = json['phone_exp'];
-    idPays = json['id_pays'];
+    nom = json['nom'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     dates = json['dates'];
@@ -52,11 +52,11 @@ class Retrait {
     data['id'] = this.id;
     data['code'] = this.code;
     data['montant_envoi'] = this.montantEnvoi;
-    data['id_devise'] = this.idDevise;
+    data['intitule'] = this.intitule;
     data['expediteur'] = this.expediteur;
     data['beneficiaire'] = this.beneficiaire;
     data['phone_exp'] = this.phoneExp;
-    data['id_pays'] = this.idPays;
+    data['nom'] = this.nom;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['dates'] = this.dates;
