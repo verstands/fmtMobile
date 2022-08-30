@@ -67,8 +67,8 @@ class _AccueilState extends State<Accueil> {
       txtPaystext;
 
   //count
-  int? countDe;
-  int? countRe;
+  String? countDe;
+  String? countRe;
   //refresh
   Future<void> _refresh() {
     return Future.delayed(
@@ -79,7 +79,9 @@ class _AccueilState extends State<Accueil> {
   void _countD() async {
     final response = await getcountD();
     if (response.erreur == null) {
-      setState(() {});
+      setState(() {
+        countDe = response.data.toString();
+      });
     } else if (response.erreur == unauthorized) {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => Login()), (route) => false);
@@ -99,7 +101,9 @@ class _AccueilState extends State<Accueil> {
   void _countR() async {
     final response = await getcountR();
     if (response.erreur == null) {
-      setState(() {});
+      setState(() {
+        countRe = response.data.toString();
+      });
     } else if (response.erreur == unauthorized) {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => Login()), (route) => false);
@@ -146,7 +150,6 @@ class _AccueilState extends State<Accueil> {
     if (response.erreur == null) {
       setState(() {
         _paysG = response.data as List;
-        print(_paysG);
       });
     } else if (response.erreur == unauthorized) {
       Navigator.of(context).pushAndRemoveUntil(
@@ -156,7 +159,7 @@ class _AccueilState extends State<Accueil> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('ss'),
+        content: Text('Pays'),
       ));
       setState(() {
         loading = false;
@@ -178,7 +181,7 @@ class _AccueilState extends State<Accueil> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('ss'),
+        content: Text('devise'),
       ));
       setState(() {
         loading = false;
@@ -360,12 +363,17 @@ class _AccueilState extends State<Accueil> {
     super.initState();
     _payss();
     _devise();
+    _countR();
+    _countD();
+    _hystorique();
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _hystorique();
       _retrieveCode();
+      _countR();
+      _countD();
       _selectedIndex = index;
     });
   }
@@ -396,7 +404,7 @@ class _AccueilState extends State<Accueil> {
                       style: TextStyle(color: Colors.white, fontSize: 30),
                     ),
                     Text(
-                      "2",
+                      "$countRe",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     )
                   ],
@@ -436,7 +444,7 @@ class _AccueilState extends State<Accueil> {
                       style: TextStyle(color: Colors.white, fontSize: 30),
                     ),
                     Text(
-                      "2",
+                      "$countDe",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     )
                   ],
@@ -543,9 +551,9 @@ class _AccueilState extends State<Accueil> {
                   keyboardType: TextInputType.text,
                   controller: txtExp,
                   validator: (val) =>
-                      val!.isEmpty ? 'Nom de expediteur vide' : null,
+                      val!.isEmpty ? 'Noms de expediteur vide' : null,
                   decoration: InputDecoration(
-                      labelText: 'Nom de expediteur',
+                      labelText: 'Noms de expediteur',
                       contentPadding: EdgeInsets.all(10),
                       border: OutlineInputBorder(
                           borderSide:
@@ -558,9 +566,9 @@ class _AccueilState extends State<Accueil> {
                   keyboardType: TextInputType.text,
                   controller: txtBenefice,
                   validator: (val) =>
-                      val!.isEmpty ? 'Nom de beneficiaire vide' : null,
+                      val!.isEmpty ? 'Noms de beneficiaire vide' : null,
                   decoration: InputDecoration(
-                      labelText: 'Nom de beneficiaire',
+                      labelText: 'Noms de beneficiaire',
                       contentPadding: EdgeInsets.all(10),
                       border: OutlineInputBorder(
                           borderSide:
@@ -635,9 +643,6 @@ class _AccueilState extends State<Accueil> {
                     },
                     value: dropdownValue1,
                     hint: Text("Selectionnez une devise"),
-                    dropdownColor: Colors.blueGrey,
-                    icon: Icon(Icons.arrow_drop_down),
-                    iconSize: 36,
                   ),
                 )),
                 const Divider(
@@ -661,10 +666,7 @@ class _AccueilState extends State<Accueil> {
                       });
                     },
                     value: dropdownValue,
-                    hint: Text("Selectionnez une devise"),
-                    dropdownColor: Colors.blueGrey,
-                    icon: Icon(Icons.arrow_drop_down),
-                    iconSize: 36,
+                    hint: Text("Selectionnez un pays"),
                   ),
                 )),
                 Container(
@@ -736,35 +738,29 @@ class _AccueilState extends State<Accueil> {
       ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           Hystorique hystoriques = _hysto[index];
-          return _loadingHy
-              ? Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.black,
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _refresh,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(columns: [
-                      DataColumn(label: Text('Pays')),
-                      DataColumn(label: Text('Nom exp')),
-                      DataColumn(label: Text('Nom benef')),
-                      DataColumn(label: Text('Tel')),
-                      DataColumn(label: Text('Montant')),
-                      DataColumn(label: Text('Devise')),
-                    ], rows: [
-                      DataRow(selected: true, cells: [
-                        DataCell(Text("${hystoriques.nom}")),
-                        DataCell(Text('${hystoriques.expediteur}')),
-                        DataCell(Text('${hystoriques.beneficiaire}')),
-                        DataCell(Text('${hystoriques.phoneExp}')),
-                        DataCell(Text('${hystoriques.montantEnvoi}')),
-                        DataCell(Text('${hystoriques.intitule}')),
-                      ]),
-                    ]),
-                  ),
-                );
+          return RefreshIndicator(
+            onRefresh: _refresh,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(columns: [
+                DataColumn(label: Text('Pays')),
+                DataColumn(label: Text('Nom exp')),
+                DataColumn(label: Text('Nom benef')),
+                DataColumn(label: Text('Tel')),
+                DataColumn(label: Text('Montant')),
+                DataColumn(label: Text('Devise')),
+              ], rows: [
+                DataRow(selected: true, cells: [
+                  DataCell(Text("${hystoriques.nom}")),
+                  DataCell(Text('${hystoriques.expediteur}')),
+                  DataCell(Text('${hystoriques.beneficiaire}')),
+                  DataCell(Text('${hystoriques.phoneExp}')),
+                  DataCell(Text('${hystoriques.montantEnvoi}')),
+                  DataCell(Text('${hystoriques.intitule}')),
+                ]),
+              ]),
+            ),
+          );
         },
         itemCount: _hysto.length,
       )
@@ -784,7 +780,6 @@ class _AccueilState extends State<Accueil> {
           ),
         ],
       ),
-      backgroundColor: Colors.white30,
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),

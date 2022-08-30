@@ -47,7 +47,6 @@ Future<ApiResponse> getcountD() async {
     switch (response.statusCode) {
       case 200:
         apiResponse.data = jsonDecode(response.body)['message'];
-        print(jsonDecode(response.body)['message']);
         break;
       case 401:
         apiResponse.erreur = unauthorized;
@@ -74,7 +73,6 @@ Future<ApiResponse> getcountR() async {
     switch (response.statusCode) {
       case 200:
         apiResponse.data = jsonDecode(response.body)['message'];
-        print(jsonDecode(response.body)['message']);
         break;
       case 401:
         apiResponse.erreur = unauthorized;

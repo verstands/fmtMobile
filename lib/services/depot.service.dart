@@ -105,7 +105,6 @@ Future<ApiResponse> getPourcentage(String montant) async {
     switch (response.statusCode) {
       case 200:
         apiResponse.data = jsonDecode(response.body)['message'];
-        print(jsonDecode(response.body)['message']);
         break;
       case 422:
         final errors = jsonDecode(response.body)['message'];
