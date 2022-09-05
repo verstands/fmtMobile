@@ -8,6 +8,8 @@ class Hystorique {
   int? status;
   String? nomAgence;
   String? dates;
+  String? stautR;
+  String? idUserR;
 
   Hystorique(
       {this.montantEnvoi,
@@ -18,7 +20,9 @@ class Hystorique {
       this.nom,
       this.status,
       this.nomAgence,
-      this.dates});
+      this.dates,
+      this.idUserR,
+      this.stautR});
 
   Hystorique.fromJson(Map<String, dynamic> json) {
     montantEnvoi = json['montant_envoi'];
@@ -30,6 +34,8 @@ class Hystorique {
     status = json['status'];
     nomAgence = json['nom_agence'];
     dates = json['dates'];
+    idUserR = json['idUserR'];
+    stautR = json['stautR'];
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +49,9 @@ class Hystorique {
     data['status'] = this.status;
     data['nom_agence'] = this.nomAgence;
     data['dates'] = this.dates;
+    data['idUserR'] = this.idUserR;
+    data['stautR'] = this.stautR;
+
     return data;
   }
 }

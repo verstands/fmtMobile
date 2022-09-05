@@ -390,7 +390,8 @@ class _AccueilState extends State<Accueil> {
           children: [
             Container(
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20), color: Colors.red),
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.grey),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -412,7 +413,7 @@ class _AccueilState extends State<Accueil> {
             Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: Colors.yellow),
+                    color: Colors.grey),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -430,7 +431,7 @@ class _AccueilState extends State<Accueil> {
             Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: Colors.green),
+                    color: Colors.grey),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -624,8 +625,7 @@ class _AccueilState extends State<Accueil> {
                 const Divider(
                   height: 10,
                 ),
-                Expanded(
-                    child: Container(
+                Container(
                   padding: EdgeInsets.only(left: 10, right: 10),
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey, width: 1),
@@ -644,12 +644,11 @@ class _AccueilState extends State<Accueil> {
                     value: dropdownValue1,
                     hint: Text("Selectionnez une devise"),
                   ),
-                )),
+                ),
                 const Divider(
                   height: 10,
                 ),
-                Expanded(
-                    child: Container(
+                Container(
                   padding: EdgeInsets.only(left: 10, right: 10),
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey, width: 1),
@@ -668,7 +667,7 @@ class _AccueilState extends State<Accueil> {
                     value: dropdownValue,
                     hint: Text("Selectionnez un pays"),
                   ),
-                )),
+                ),
                 Container(
                   padding: EdgeInsets.all(15),
                   decoration: const BoxDecoration(
