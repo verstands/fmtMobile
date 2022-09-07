@@ -15,6 +15,7 @@ const UtiliserCodeURL = baseURL + '/codeUse';
 const PourcentageURL = baseURL + '/pourcentageT';
 const countD = baseURL + '/countDepot';
 const countR = baseURL + '/countRetrait';
+const HystoriqueRURL = baseURL + '/historiqueAgenceR';
 
 //---------------erreur------------------------------
 const serverError = "Aucune connexion";

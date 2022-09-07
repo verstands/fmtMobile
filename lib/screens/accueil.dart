@@ -12,8 +12,10 @@ import 'package:fmt/models/api_response.dart';
 import 'package:fmt/models/code.model.dart';
 import 'package:fmt/models/hystorique.model.dart';
 import 'package:fmt/models/retrait.model.dart';
+import 'package:fmt/screens/depot.dart';
 import 'package:fmt/screens/login.dart';
 import 'package:fmt/screens/profil.dart';
+import 'package:fmt/screens/retrait.dart';
 import 'package:fmt/services/depot.service.dart';
 import 'package:fmt/services/hystorique.service.dart';
 import 'package:fmt/services/profile.service.dart';
@@ -734,34 +736,61 @@ class _AccueilState extends State<Accueil> {
               ],
             )),
       ),
-      ListView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          Hystorique hystoriques = _hysto[index];
-          return RefreshIndicator(
-            onRefresh: _refresh,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(columns: [
-                DataColumn(label: Text('Pays')),
-                DataColumn(label: Text('Nom exp')),
-                DataColumn(label: Text('Nom benef')),
-                DataColumn(label: Text('Tel')),
-                DataColumn(label: Text('Montant')),
-                DataColumn(label: Text('Devise')),
-              ], rows: [
-                DataRow(selected: true, cells: [
-                  DataCell(Text("${hystoriques.nom}")),
-                  DataCell(Text('${hystoriques.expediteur}')),
-                  DataCell(Text('${hystoriques.beneficiaire}')),
-                  DataCell(Text('${hystoriques.phoneExp}')),
-                  DataCell(Text('${hystoriques.montantEnvoi}')),
-                  DataCell(Text('${hystoriques.intitule}')),
-                ]),
-              ]),
+      ListView(
+        children: [
+          Divider(
+            height: 20,
+          ),
+          ListTile(
+            leading: const CircleAvatar(
+              radius: 25,
             ),
-          );
-        },
-        itemCount: _hysto.length,
+            title: const Text(
+              'Depot',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.arrow_forward),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const DepotScreen()));
+              },
+            ),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const DepotScreen()));
+            },
+          ),
+          Divider(
+            height: 20,
+          ),
+          ListTile(
+            leading: const CircleAvatar(
+              radius: 25,
+            ),
+            title: const Text(
+              'Retrait',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.arrow_forward),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Retrait_Screen()));
+              },
+            ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const Retrait_Screen()));
+            },
+          ),
+        ],
       )
     ];
     return Scaffold(
