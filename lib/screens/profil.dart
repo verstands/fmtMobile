@@ -83,87 +83,78 @@ class _ProfileState extends State<Profile> {
               icon: Icon(Icons.exit_to_app))
         ],
       ),
-      body: ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-              padding: EdgeInsets.all(5),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.person,
-                      size: 100,
+      body: Container(
+        padding: EdgeInsets.all(30),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.person,
+              size: 100,
+            ),
+            loading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.black,
                     ),
-                    loading
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.black,
-                            ),
-                          )
-                        : Form(
-                            key: formkey2,
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              child: Column(
-                                children: [
-                                  TextFormField(
-                                    keyboardType: TextInputType.text,
-                                    controller: txtnom,
-                                    validator: (val) =>
-                                        val!.isEmpty ? 'Nom vide' : null,
-                                    decoration: InputDecoration(
-                                        labelText: 'Nom',
-                                        contentPadding: EdgeInsets.all(10),
-                                        enabled: false,
-                                        border: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                width: 1,
-                                                color: Colors.black))),
-                                  ),
-                                  const Divider(
-                                    height: 10,
-                                  ),
-                                  TextFormField(
-                                    keyboardType: TextInputType.text,
-                                    controller: txtprenom,
-                                    validator: (val) =>
-                                        val!.isEmpty ? 'prenom vide' : null,
-                                    enabled: false,
-                                    decoration: InputDecoration(
-                                        labelText: 'Prenom',
-                                        contentPadding: EdgeInsets.all(10),
-                                        border: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                width: 1,
-                                                color: Colors.black))),
-                                  ),
-                                  const Divider(
-                                    height: 10,
-                                  ),
-                                  TextFormField(
-                                    keyboardType: TextInputType.text,
-                                    controller: txtemail,
-                                    validator: (val) =>
-                                        val!.isEmpty ? 'email vide' : null,
-                                    enabled: false,
-                                    decoration: InputDecoration(
-                                        labelText: 'Email',
-                                        contentPadding: EdgeInsets.all(10),
-                                        border: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                width: 1,
-                                                color: Colors.black))),
-                                  ),
-                                ],
-                              ),
-                            )),
-                  ],
-                ),
-              ),
-            );
-          },
-          itemCount: 1),
+                  )
+                : Form(
+                    key: formkey2,
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            keyboardType: TextInputType.text,
+                            controller: txtnom,
+                            validator: (val) =>
+                                val!.isEmpty ? 'Nom vide' : null,
+                            decoration: InputDecoration(
+                                labelText: 'Nom',
+                                contentPadding: EdgeInsets.all(10),
+                                enabled: false,
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        width: 1, color: Colors.black))),
+                          ),
+                          const Divider(
+                            height: 10,
+                          ),
+                          TextFormField(
+                            keyboardType: TextInputType.text,
+                            controller: txtprenom,
+                            validator: (val) =>
+                                val!.isEmpty ? 'prenom vide' : null,
+                            enabled: false,
+                            decoration: InputDecoration(
+                                labelText: 'Prenom',
+                                contentPadding: EdgeInsets.all(10),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        width: 1, color: Colors.black))),
+                          ),
+                          const Divider(
+                            height: 10,
+                          ),
+                          TextFormField(
+                            keyboardType: TextInputType.text,
+                            controller: txtemail,
+                            validator: (val) =>
+                                val!.isEmpty ? 'email vide' : null,
+                            enabled: false,
+                            decoration: InputDecoration(
+                                labelText: 'Email',
+                                contentPadding: EdgeInsets.all(10),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        width: 1, color: Colors.black))),
+                          ),
+                        ],
+                      ),
+                    )),
+          ],
+        ),
+      ),
     );
   }
 }
