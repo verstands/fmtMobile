@@ -1,4 +1,4 @@
-package com.example.fmt
+package com.rabby.fmt
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -16,7 +16,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   void _test() {
     Timer(
-        const Duration(seconds: 10),
+        const Duration(seconds: 7),
         () => Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const Login())));
   }
